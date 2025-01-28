@@ -2,13 +2,15 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
-import { databaseConfig } from './config/configuration.config';
+import { databaseConfig, redisConfig } from './config/configuration.config';
 import { DatabaseModule } from './database/database.module';
 import { UsersModule } from './modules/users/users.module';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { PostsController } from './modules/posts/posts.controller';
 import { TagsController } from './modules/tags/tags.controller';
 import { CommentsController } from './modules/comments/comments.controller';
+import { RedisModule } from './services/redis/redis.module';
+import { AuthModule } from './modules/auth/auth.module';
 import * as Joi from 'joi';
 
 @Module({
@@ -16,7 +18,7 @@ import * as Joi from 'joi';
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: process.env.NODE_ENV === 'development' ? '.env.dev' : '.env',
-      load: [databaseConfig],
+      load: [databaseConfig, redisConfig],
       cache: true,
       expandVariables: true,
       validationSchema: Joi.object({
@@ -32,6 +34,8 @@ import * as Joi from 'joi';
     DatabaseModule,
     UsersModule,
     CategoriesModule,
+    RedisModule,
+    AuthModule,
   ],
   controllers: [
     AppController,

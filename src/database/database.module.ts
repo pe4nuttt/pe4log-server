@@ -27,6 +27,9 @@ import { DataSource, DataSourceOptions } from 'typeorm';
           cli: {
             migrationsDir: __dirname + '/database/migrations/**/*{.ts,.js}',
           },
+          synchronize: configService.get('DATABASE_SYNCHRONIZE', {
+            infer: true,
+          }),
         } as DataSourceOptions;
       },
       dataSourceFactory: async (options) => {
