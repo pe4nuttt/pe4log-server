@@ -1,0 +1,9 @@
+{
+  "hello": "Hello",
+  "test": "Test",
+  "close": "Close",
+  "validation": {
+    "emailAlreadyExisted": "Email already existed!",
+    "sessionNotFound": "Session not found"
+  }
+}

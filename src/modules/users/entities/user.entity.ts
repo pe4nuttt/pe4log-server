@@ -1,5 +1,6 @@
 import { Comment } from 'src/modules/comments/entities/comment.entity';
 import { Post } from 'src/modules/posts/entities/post.entity';
+import { EUserAuthProvider } from 'src/utils/enums';
 import {
   Entity,
   Column,
@@ -15,7 +16,10 @@ export class User {
   id: string;
 
   @Column({ length: 255 })
-  name: string;
+  firstName: string;
+
+  @Column({ length: 255 })
+  lastName: string;
 
   @Column({ length: 255, unique: true })
   email: string;
@@ -25,13 +29,13 @@ export class User {
 
   @Column({
     type: 'enum',
-    enum: ['email', 'google', 'facebook', 'github'],
+    enum: EUserAuthProvider,
     default: 'email',
   })
-  authProvider: 'email' | 'google' | 'facebook' | 'github';
+  authProvider: EUserAuthProvider;
 
   @Column({ length: 255, nullable: true })
-  authProviderId: string;
+  authProviderId?: string | null;
 
   @Column({
     type: 'enum',
@@ -47,8 +51,8 @@ export class User {
   updatedAt: Date;
 
   @OneToMany(() => Post, (post) => post.author)
-  posts: Post[];
+  posts?: Post[] | null;
 
   @OneToMany(() => Comment, (comment) => comment.user)
-  comments: Comment[];
+  comments?: Comment[] | null;
 }

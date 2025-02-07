@@ -17,6 +17,26 @@ export interface RedisConfig {
   keyPrefix: string;
 }
 
+export interface AuthConfig {
+  secret: string;
+  expires: string;
+  refreshSecret: string;
+  refreshExpires: string;
+  forgotSecret: string;
+  forgotExpires: string;
+  confirmEmailSecret: string;
+  confirmEmailExpires: string;
+}
+
+export interface AllConfigType {
+  auth: AuthConfig;
+  database: DatabaseConfig;
+  redis: RedisConfig;
+  test: {
+    test: string;
+  };
+}
+
 export const databaseConfig = (): { database: DatabaseConfig } => ({
   database: {
     type: process.env.DATABASE_TYPE,
@@ -39,5 +59,18 @@ export const redisConfig = (): { redis: RedisConfig } => ({
     password: process.env.REDIS_PASSWORD,
     db: process.env.REDIS_DB ? parseInt(process.env.REDIS_DB) : 0,
     keyPrefix: process.env.REDIS_PREFIX_KEY,
+  },
+});
+
+export const authConfig = (): { auth: AuthConfig } => ({
+  auth: {
+    secret: process.env.AUTH_JWT_SECRET,
+    expires: process.env.AUTH_JWT_TOKEN_EXPIRES_IN || '15m',
+    refreshSecret: process.env.AUTH_REFRESH_SECRET || '',
+    refreshExpires: process.env.AUTH_REFRESH_TOKEN_EXPIRES_IN,
+    forgotSecret: process.env.AUTH_FORGOT_SECRET,
+    forgotExpires: process.env.AUTH_FORGOT_TOKEN_EXPIRES_IN,
+    confirmEmailSecret: process.env.AUTH_CONFIRM_EMAIL_SECRET,
+    confirmEmailExpires: process.env.AUTH_CONFIRM_EMAIL_TOKEN_EXPIRES_IN,
   },
 });

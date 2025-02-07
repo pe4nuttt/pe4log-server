@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { RedisService } from './redis.service';
+import { SessionService } from './session.service';
 
-describe('RedisService', () => {
-  let service: RedisService;
+describe('SessionService', () => {
+  let service: SessionService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [RedisService],
+      providers: [SessionService],
     }).compile();
 
-    service = module.get<RedisService>(RedisService);
+    service = module.get<SessionService>(SessionService);
   });
 
   it('should be defined', () => {
