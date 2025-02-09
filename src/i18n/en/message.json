@@ -4,6 +4,9 @@
   "close": "Close",
   "validation": {
     "emailAlreadyExisted": "Email already existed!",
-    "sessionNotFound": "Session not found"
+    "sessionNotFound": "Session not found",
+    "emailNotFound": "Email not found",
+    "needLoginViaEmailProvider": "You need to login via emaill and password",
+    "incorrectPassword": "Password is incorrect"
   }
 }

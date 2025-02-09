@@ -1,4 +1,9 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { SignUpDto } from './dto/signUp.dto';
 import { LocalesService } from 'src/services/i18n/i18n.service';
@@ -14,6 +19,8 @@ import { Session } from '../session/entities/session.entity';
 import { SessionService } from '../session/session.service';
 import * as crypto from 'crypto';
 import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
+import { SignInDto } from './dto/signIn.dto';
+import { SignInResponseDto } from './dto/signInResponse.dto';
 
 @Injectable()
 export class AuthService {
@@ -30,8 +37,6 @@ export class AuthService {
   async signUp(signUpDto: SignUpDto): Promise<SignUpResponseDto> {
     try {
       const isExistedUser = await this.userService.findByEmail(signUpDto.email);
-
-      console.log('[CHECK]', ms('90 days'), ms);
 
       if (isExistedUser) {
         throw new ConflictException(
@@ -81,6 +86,62 @@ export class AuthService {
     } catch (error) {
       throw error;
     }
+  }
+
+  async signIn(signInDto: SignInDto): Promise<SignInResponseDto> {
+    const user = await this.userService.findByEmail(signInDto.email);
+
+    if (!user) {
+      throw new NotFoundException(
+        this.localesService.translate('message.validation.emailNotFound'),
+      );
+    }
+
+    if (user.authProvider != EUserAuthProvider.EMAIL) {
+      throw new UnprocessableEntityException(
+        this.localesService.translate(
+          'message.validation.needLoginViaEmailProvider',
+        ),
+      );
+    }
+
+    if (!user.password)
+      throw new UnprocessableEntityException(
+        this.localesService.translate('message.validation.incorrectPassword'),
+      );
+
+    const isValid = bcrypt.compare(signInDto.password, user.password);
+
+    if (!isValid)
+      throw new UnprocessableEntityException(
+        this.localesService.translate('message.validation.incorrectPassword'),
+      );
+
+    const hash = crypto
+      .createHash('sha256')
+      .update(randomStringGenerator())
+      .digest('hex');
+
+    const session = await this.sessionService.create({
+      user: user,
+      hash,
+    });
+
+    const { accessToken, refreshToken, tokenExpires } =
+      await this.getTokensData({
+        id: user.id,
+        role: user.role,
+        email: user.email,
+        sessionId: session.id,
+        hash,
+      });
+
+    return {
+      accessToken,
+      refreshToken,
+      tokenExpires,
+      user,
+    };
   }
 
   private async getTokensData(data: {

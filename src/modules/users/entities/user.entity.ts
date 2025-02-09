@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import { Comment } from 'src/modules/comments/entities/comment.entity';
 import { Post } from 'src/modules/posts/entities/post.entity';
 import { EUserAuthProvider } from 'src/utils/enums';
@@ -24,13 +25,16 @@ export class User {
   @Column({ length: 255, unique: true })
   email: string;
 
+  @Exclude({
+    toPlainOnly: true,
+  })
   @Column({ length: 255, nullable: true })
   password: string;
 
   @Column({
     type: 'enum',
     enum: EUserAuthProvider,
-    default: 'email',
+    default: EUserAuthProvider.EMAIL,
   })
   authProvider: EUserAuthProvider;
 
