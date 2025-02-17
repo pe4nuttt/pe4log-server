@@ -28,8 +28,8 @@ export class Session {
   createdAt: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt?: Date | null;
 
   @DeleteDateColumn()
-  deletedAt: Date;
+  deletedAt?: Date | null;
 }

@@ -47,4 +47,10 @@ export class SessionService {
       ...payload,
     });
   }
+
+  async deleteById(id: Session['id']) {
+    return this.sessionRepository.softDelete({
+      id,
+    });
+  }
 }

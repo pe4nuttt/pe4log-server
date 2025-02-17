@@ -52,7 +52,7 @@ export class User {
   createdAt: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt?: Date | null;
 
   @OneToMany(() => Post, (post) => post.author)
   posts?: Post[] | null;

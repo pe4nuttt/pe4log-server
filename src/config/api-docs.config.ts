@@ -6,6 +6,7 @@ export function configSwagger(app: INestApplication) {
     .setTitle('Pe4log project')
     .setDescription('## The pe4log server API description')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api-docs', app, document, {

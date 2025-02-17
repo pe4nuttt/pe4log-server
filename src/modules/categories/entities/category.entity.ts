@@ -23,7 +23,7 @@ export class Category {
   createdAt: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt?: Date | null;
 
   @OneToMany(() => Post, (post) => post.category)
   posts: Post[];

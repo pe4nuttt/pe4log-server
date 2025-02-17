@@ -2,6 +2,7 @@ import { Category } from 'src/modules/categories/entities/category.entity';
 import { Comment } from 'src/modules/comments/entities/comment.entity';
 import { Tag } from 'src/modules/tags/entities/tag.entity';
 import { User } from 'src/modules/users/entities/user.entity';
+import { EPostStatus } from 'src/utils/enums';
 import {
   Column,
   CreateDateColumn,
@@ -25,21 +26,30 @@ export class Post {
   @Column({ type: 'varchar', length: 512, unique: true })
   slug: string;
 
+  @Column({ type: 'varchar', length: 512, nullable: true })
+  seoTitle?: string;
+
+  @Column({ type: 'varchar', length: 512, nullable: true })
+  seoDescription?: string;
+
   @Column('text')
   content: string;
 
   @Column({
     type: 'enum',
-    enum: ['draft', 'published', 'archived'],
-    default: 'draft',
+    enum: EPostStatus,
+    default: EPostStatus.DRAFT,
   })
-  status: 'draft' | 'published' | 'archived';
+  status: EPostStatus;
 
-  @ManyToOne(() => User, (user) => user.posts, { eager: true })
+  @ManyToOne(() => User, (user) => user.posts, { eager: true, nullable: false })
   author: User;
 
-  @ManyToOne(() => Category, (category) => category.posts, { eager: true })
-  category: Category;
+  @ManyToOne(() => Category, (category) => category.posts, {
+    eager: true,
+    nullable: true,
+  })
+  category?: Category;
 
   @ManyToMany(() => Tag, (tag) => tag.posts)
   tags: Tag[];
@@ -51,8 +61,8 @@ export class Post {
   createdAt: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt?: Date | null;
 
   @DeleteDateColumn()
-  deleteAt: Date;
+  deletedAt?: Date | null;
 }

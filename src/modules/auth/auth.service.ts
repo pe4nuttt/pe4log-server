@@ -2,6 +2,7 @@ import {
   ConflictException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
@@ -21,6 +22,7 @@ import * as crypto from 'crypto';
 import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
 import { SignInDto } from './dto/signIn.dto';
 import { SignInResponseDto } from './dto/signInResponse.dto';
+import { IJwtPayload } from './interfaces/jwtPayload.interface';
 
 @Injectable()
 export class AuthService {
@@ -29,7 +31,7 @@ export class AuthService {
   constructor(
     private readonly userService: UsersService,
     private readonly localesService: LocalesService,
-    private readonly configSerivce: ConfigService<AllConfigType>,
+    private readonly configService: ConfigService<AllConfigType>,
     private readonly jwtService: JwtService,
     private readonly sessionService: SessionService,
   ) {}
@@ -144,6 +146,54 @@ export class AuthService {
     };
   }
 
+  async refreshToken(
+    data: Pick<IJwtPayload, 'sessionId' | 'hash'>,
+  ): Promise<Omit<SignInResponseDto, 'user'>> {
+    const session = await this.sessionService.findById(data.sessionId);
+
+    if (!session) {
+      throw new UnauthorizedException();
+    }
+
+    if (session.deletedAt || session.hash !== data.hash) {
+      throw new UnauthorizedException();
+    }
+
+    const hash = crypto
+      .createHash('sha256')
+      .update(randomStringGenerator())
+      .digest('hex');
+
+    const user = await this.userService.findById(session.user.id);
+
+    if (!user?.role) {
+      throw new UnauthorizedException();
+    }
+
+    await this.sessionService.update(session.id, {
+      hash,
+    });
+
+    const { accessToken, refreshToken, tokenExpires } =
+      await this.getTokensData({
+        id: user.id,
+        role: user.role,
+        email: user.email,
+        sessionId: session.id,
+        hash,
+      });
+
+    return {
+      accessToken,
+      refreshToken,
+      tokenExpires,
+    };
+  }
+
+  async signOut(data: Pick<IJwtPayload, 'sessionId'>) {
+    await this.sessionService.deleteById(data.sessionId);
+  }
+
   private async getTokensData(data: {
     id: User['id'];
     role: User['role'];
@@ -151,7 +201,7 @@ export class AuthService {
     sessionId: Session['id'];
     hash: Session['hash'];
   }) {
-    const tokenExpiresIn = this.configSerivce.getOrThrow('auth.expires', {
+    const tokenExpiresIn = this.configService.getOrThrow('auth.expires', {
       infer: true,
     });
 
@@ -167,7 +217,7 @@ export class AuthService {
         },
         {
           expiresIn: tokenExpiresIn,
-          secret: this.configSerivce.getOrThrow('auth.secret', {
+          secret: this.configService.getOrThrow('auth.secret', {
             infer: true,
           }),
         },
@@ -179,7 +229,7 @@ export class AuthService {
         },
         {
           expiresIn: tokenExpiresIn,
-          secret: this.configSerivce.getOrThrow('auth.secret', {
+          secret: this.configService.getOrThrow('auth.refreshSecret', {
             infer: true,
           }),
         },
@@ -191,5 +241,9 @@ export class AuthService {
       refreshToken,
       tokenExpires,
     };
+  }
+
+  async me(userJwtPayload: IJwtPayload) {
+    return this.userService.findById(userJwtPayload.id);
   }
 }

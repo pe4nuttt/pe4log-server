@@ -7,6 +7,12 @@ import { NullableType } from 'joi';
 export class UsersService {
   constructor(private readonly usersRepository: UserRepository) {}
 
+  async findById(id: User['id']): Promise<NullableType<User>> {
+    return await this.usersRepository.findOne({
+      where: { id },
+    });
+  }
+
   async findByEmail(email: User['email']): Promise<NullableType<User>> {
     return await this.usersRepository.findOne({
       where: { email },

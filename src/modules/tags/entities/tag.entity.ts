@@ -24,7 +24,7 @@ export class Tag {
   createdAt: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt?: Date | null;
 
   @ManyToMany(() => Post, (post) => post.tags)
   @JoinTable({
