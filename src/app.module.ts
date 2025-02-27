@@ -19,6 +19,7 @@ import { FilesModule } from './files/files.module';
 import { SessionModule } from './modules/session/session.module';
 import { PostsModule } from './modules/posts/posts.module';
 import * as Joi from 'joi';
+import { TagsModule } from './modules/tags/tags.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import * as Joi from 'joi';
     FilesModule,
     SessionModule,
     PostsModule,
+    TagsModule,
   ],
   controllers: [AppController, TagsController, CommentsController],
   providers: [AppService],

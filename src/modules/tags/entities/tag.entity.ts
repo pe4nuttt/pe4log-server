@@ -11,14 +11,17 @@ import {
 
 @Entity('tags')
 export class Tag {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column({ length: 255, unique: true })
   name: string;
 
   @Column({ length: 255, unique: true })
   slug: string;
+
+  @Column({ type: 'varchar', length: 7, nullable: true })
+  color?: string;
 
   @CreateDateColumn()
   createdAt: Date;

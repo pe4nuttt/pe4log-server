@@ -19,12 +19,12 @@ export class TransformInterceptor<T> implements NestInterceptor<T, IResponse> {
 
     return next.handle().pipe(
       map((res) => {
-        const { code, message } = res || {};
+        const { code, message, data } = res || {};
         return {
           success: true,
           code: code || response.statusCode,
           message: message || response.statusMessage,
-          data: res,
+          data: data || res,
         } as IResponse;
       }),
     );

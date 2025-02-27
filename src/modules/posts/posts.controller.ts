@@ -18,7 +18,7 @@ import { Roles } from 'src/utils/decorators/roles.decorator';
 import { EUserRole } from 'src/utils/enums';
 
 @Controller('posts')
-@ApiTags('posts')
+@ApiTags('Posts')
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 

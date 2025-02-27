@@ -5,12 +5,15 @@ import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { HttpExceptionFilter } from './utils/filters';
 import { TransformInterceptor } from './utils/interceptors';
 import { configSwagger } from './config/api-docs.config';
+import validationOptions from './utils/validation-options';
 // import { ConfigService } from '@nestjs/config';
 // import { DatabaseConfig } from './config/configuration.config';
 // import { Logger } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  app.setGlobalPrefix('api');
+  app.enableCors();
   configSwagger(app);
   // const configService = app.get(ConfigService);
   // const logger = new Logger(bootstrap.name);
@@ -21,8 +24,8 @@ async function bootstrap() {
     new TransformInterceptor(),
     new ClassSerializerInterceptor(app.get(Reflector)),
   );
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe(validationOptions));
 
-  await app.listen(3000);
+  await app.listen(8000);
 }
 bootstrap();

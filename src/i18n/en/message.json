@@ -8,5 +8,9 @@
     "emailNotFound": "Email not found",
     "needLoginViaEmailProvider": "You need to login via emaill and password",
     "incorrectPassword": "Password is incorrect"
+  },
+  "auth": {
+    "loginSuccess": "Login successfully",
+    "signupSuccess": "Sign up successfully"
   }
 }

@@ -17,20 +17,34 @@ import { User } from '../users/entities/user.entity';
 import { NullableType } from 'joi';
 import { JwtRefreshGuard } from './guards/jwtRefreshGuard';
 import { RefreshResponseDto } from './dto/refreshResponse.dto';
+import { LocalesService } from 'src/services/i18n/i18n.service';
 
 @Controller('auth')
 @ApiTags('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly localesService: LocalesService,
+  ) {}
 
   @Post('sign-up')
   async signUp(@Body() signUpDto: SignUpDto) {
-    return this.authService.signUp(signUpDto);
+    const data = await this.authService.signUp(signUpDto);
+
+    return {
+      message: this.localesService.translate('message.auth.signupSuccess'),
+      data,
+    };
   }
 
   @Post('sign-in')
   async signIn(@Body() signInDto: SignInDto) {
-    return this.authService.signIn(signInDto);
+    const data = await this.authService.signIn(signInDto);
+
+    return {
+      message: this.localesService.translate('message.auth.loginSuccess'),
+      data,
+    };
   }
 
   @ApiBearerAuth()
@@ -55,8 +69,6 @@ export class AuthController {
   @Post('refresh')
   @UseGuards(JwtRefreshGuard)
   async refresh(@Request() request): Promise<RefreshResponseDto> {
-    console.log('[CHECK]', request.user);
-
     return await this.authService.refreshToken({
       sessionId: request.user.sessionId,
       hash: request.user.hash,

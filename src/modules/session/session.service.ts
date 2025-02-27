@@ -32,7 +32,7 @@ export class SessionService {
       Omit<Session, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>
     >,
   ): Promise<Session | null> {
-    const entity = this.sessionRepository.findOne({
+    const entity = await this.sessionRepository.findOne({
       where: { id },
     });
 

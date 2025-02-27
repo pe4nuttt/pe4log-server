@@ -204,6 +204,12 @@ export class AuthService {
     const tokenExpiresIn = this.configService.getOrThrow('auth.expires', {
       infer: true,
     });
+    const refreshTokenExpires = this.configService.getOrThrow(
+      'auth.refreshExpires',
+      {
+        infer: true,
+      },
+    );
 
     const tokenExpires = Date.now() + ms(tokenExpiresIn as ms.StringValue);
 
@@ -228,7 +234,7 @@ export class AuthService {
           hash: data.hash,
         },
         {
-          expiresIn: tokenExpiresIn,
+          expiresIn: refreshTokenExpires,
           secret: this.configService.getOrThrow('auth.refreshSecret', {
             infer: true,
           }),

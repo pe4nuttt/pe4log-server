@@ -17,8 +17,8 @@ import {
 
 @Entity()
 export class Post {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column({ type: 'varchar', length: 512 })
   title: string;

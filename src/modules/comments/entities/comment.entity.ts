@@ -13,8 +13,8 @@ import {
 @Entity('comments')
 @Tree('nested-set')
 export class Comment {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column({ type: 'text' })
   content: string;

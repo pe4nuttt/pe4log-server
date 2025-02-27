@@ -5,18 +5,19 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  DeleteDateColumn,
 } from 'typeorm';
 import { Post } from 'src/modules/posts/entities/post.entity';
 
 @Entity('categories')
 export class Category {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-  @Column({ length: 255, unique: true })
+  @Column({ length: 50, unique: true })
   name: string;
 
-  @Column({ length: 255, unique: true })
+  @Column({ length: 250, unique: true })
   slug: string;
 
   @CreateDateColumn()
@@ -24,6 +25,9 @@ export class Category {
 
   @UpdateDateColumn()
   updatedAt?: Date | null;
+
+  @DeleteDateColumn()
+  deletedAt?: Date | null;
 
   @OneToMany(() => Post, (post) => post.category)
   posts: Post[];
