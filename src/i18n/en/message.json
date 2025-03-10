@@ -7,7 +7,22 @@
     "sessionNotFound": "Session not found",
     "emailNotFound": "Email not found",
     "needLoginViaEmailProvider": "You need to login via emaill and password",
-    "incorrectPassword": "Password is incorrect"
+    "incorrectPassword": "Password is incorrect",
+    "categoryExist": "Category with this name or slug already exists"
+  },
+  "category": {
+    "createCategorySuccess": "Create new category successfully",
+    "updateCategorySuccess": "Update category successfully",
+    "deleteCategorySuccess": "Delete category successfully",
+    "categoryNotFound": "Category not found"
+  },
+  "tag": {
+    "createTagSuccess": "Create new tag successfully",
+    "updateTagSuccess": "Update tag successfully",
+    "deleteTagSuccess": "Delete tag successfully"
+  },
+  "post": {
+    "postNotFound": "Post not found"
   },
   "auth": {
     "loginSuccess": "Login successfully",

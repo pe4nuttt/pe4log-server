@@ -1,11 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePostDto } from './dto/createPost.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PostRepository } from './post.repository';
+import { Post } from './entities/post.entity';
+import { LocalesService } from 'src/services/i18n/i18n.service';
 
 @Injectable()
 export class PostsService {
-  constructor(private readonly postRepository: PostRepository) {}
+  constructor(
+    private readonly postRepository: PostRepository,
+    private readonly localesService: LocalesService,
+  ) {}
 
   create(createPostDto: CreatePostDto) {
     return 'This action adds a new post';
@@ -15,15 +20,34 @@ export class PostsService {
     return `This action returns all posts`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} post`;
+  async findById(id: Post['id']) {
+    return await this.postRepository.findOne({
+      where: {
+        id,
+      },
+    });
   }
 
-  update(id: number, updatePostDto: UpdatePostDto) {
-    return `This action updates a #${id} post`;
+  async update(id: Post['id'], updatePostDto: UpdatePostDto) {
+    const entity = await this.postRepository.findOne({
+      where: {
+        id,
+      },
+    });
+
+    if (!entity) {
+      throw new NotFoundException(
+        this.localesService.translate('message.post.postNotFound'),
+      );
+    }
+
+    return await this.postRepository.save({
+      ...entity,
+      ...updatePostDto,
+    });
   }
 
-  remove(id: number) {
+  remove(id: string) {
     return `This action removes a #${id} post`;
   }
 }

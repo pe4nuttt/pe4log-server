@@ -6,6 +6,8 @@ import { HttpExceptionFilter } from './utils/filters';
 import { TransformInterceptor } from './utils/interceptors';
 import { configSwagger } from './config/api-docs.config';
 import validationOptions from './utils/validation-options';
+import { WsAdapter } from '@nestjs/platform-ws';
+
 // import { ConfigService } from '@nestjs/config';
 // import { DatabaseConfig } from './config/configuration.config';
 // import { Logger } from '@nestjs/common';
@@ -19,6 +21,7 @@ async function bootstrap() {
   // const logger = new Logger(bootstrap.name);
   // const database_env = configService.get<DatabaseConfig>('database');
   // logger.debug(database_env);
+  app.useWebSocketAdapter(new WsAdapter(app));
   app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalInterceptors(
     new TransformInterceptor(),

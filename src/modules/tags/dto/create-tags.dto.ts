@@ -1,5 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString, Length } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Length,
+  Matches,
+} from 'class-validator';
+import { SLUG_REGEX } from 'src/utils/constants';
 
 export class CreateTagsDto {
   @ApiProperty({
@@ -10,6 +17,18 @@ export class CreateTagsDto {
   @IsString()
   @Length(3, 50)
   name: string;
+
+  @ApiProperty({
+    example: 'sport-activity',
+    description: 'Slug of the category',
+  })
+  @IsOptional()
+  @IsString()
+  @Length(3, 255)
+  @Matches(SLUG_REGEX, {
+    message: 'Invalid slug',
+  })
+  slug: string;
 
   @ApiProperty({
     example: '#ffffff',

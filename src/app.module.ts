@@ -20,6 +20,9 @@ import { SessionModule } from './modules/session/session.module';
 import { PostsModule } from './modules/posts/posts.module';
 import * as Joi from 'joi';
 import { TagsModule } from './modules/tags/tags.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { HocuspocusModule } from './hocuspocus/hocuspocus.module';
+import { SyncModule } from './sync/sync.module';
 
 @Module({
   imports: [
@@ -49,6 +52,9 @@ import { TagsModule } from './modules/tags/tags.module';
     SessionModule,
     PostsModule,
     TagsModule,
+    CloudinaryModule,
+    HocuspocusModule,
+    SyncModule,
   ],
   controllers: [AppController, TagsController, CommentsController],
   providers: [AppService],

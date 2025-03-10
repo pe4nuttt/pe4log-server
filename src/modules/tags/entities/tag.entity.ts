@@ -7,6 +7,7 @@ import {
   UpdateDateColumn,
   ManyToMany,
   JoinTable,
+  DeleteDateColumn,
 } from 'typeorm';
 
 @Entity('tags')
@@ -28,6 +29,9 @@ export class Tag {
 
   @UpdateDateColumn()
   updatedAt?: Date | null;
+
+  @DeleteDateColumn()
+  deletedAt?: Date | null;
 
   @ManyToMany(() => Post, (post) => post.tags)
   @JoinTable({

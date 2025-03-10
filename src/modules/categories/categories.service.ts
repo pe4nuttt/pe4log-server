@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { LocalesService } from 'src/services/i18n/i18n.service';
@@ -20,6 +24,24 @@ export class CategoriesService {
   ) {}
 
   async create(data: CreateCategoryDto): Promise<Category> {
+    if (data.name && !data.slug) {
+      data.slug = generateSlug(data.name);
+    }
+
+    const foundCategory = await this.categoryRepository.findOne({
+      where: [
+        {
+          name: data.name,
+          slug: data.slug,
+        },
+      ],
+    });
+
+    if (foundCategory)
+      throw new BadRequestException(
+        this.localesService.translate('message.validation.categoryExist'),
+      );
+
     const newCategory = this.categoryRepository.create({
       ...data,
       slug: generateSlug(data.name),
@@ -87,7 +109,7 @@ export class CategoriesService {
 
     if (!entity) {
       throw new NotFoundException(
-        this.localesService.translate('message.validation.sessionNotFound'),
+        this.localesService.translate('message.category.categoryNotFound'),
       );
     }
 

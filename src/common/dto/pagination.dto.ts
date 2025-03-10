@@ -50,6 +50,9 @@ export class PaginationDto {
     default: 'DESC',
   })
   @IsOptional()
+  @Transform(({ value }) =>
+    value ? (value as string).toUpperCase() : undefined,
+  )
   @IsEnum(ESortOrder)
   order?: ESortOrder = ESortOrder.DESC; // Default sorting order
 

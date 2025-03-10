@@ -17,17 +17,25 @@ import { ApiBearerAuth } from '@nestjs/swagger';
 import { JwtGuard } from '../auth/guards/jwtGuard';
 import { Roles } from 'src/utils/decorators/roles.decorator';
 import { EUserRole } from 'src/utils/enums';
+import { LocalesService } from 'src/services/i18n/i18n.service';
 
 @Controller('tags')
 export class TagsController {
-  constructor(private readonly tagsService: TagsService) {}
+  constructor(
+    private readonly tagsService: TagsService,
+    private readonly localesService: LocalesService,
+  ) {}
 
   @ApiBearerAuth()
   @UseGuards(JwtGuard)
   @Roles(EUserRole.ADMIN)
   @Post()
-  create(@Body() createTagsDto: CreateTagsDto) {
-    return this.tagsService.create(createTagsDto);
+  async create(@Body() createTagsDto: CreateTagsDto) {
+    const data = await this.tagsService.create(createTagsDto);
+    return {
+      message: this.localesService.translate('message.tag.createTagSuccess'),
+      data,
+    };
   }
 
   @Get()
@@ -44,15 +52,23 @@ export class TagsController {
   @UseGuards(JwtGuard)
   @Roles(EUserRole.ADMIN)
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTagsDto: UpdateTagsDto) {
-    return this.tagsService.update(+id, updateTagsDto);
+  async update(@Param('id') id: string, @Body() updateTagsDto: UpdateTagsDto) {
+    const data = await this.tagsService.update(+id, updateTagsDto);
+    return {
+      message: this.localesService.translate('message.tag.updateTagSuccess'),
+      data,
+    };
   }
 
   @ApiBearerAuth()
   @UseGuards(JwtGuard)
   @Roles(EUserRole.ADMIN)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.tagsService.remove(+id);
+  async remove(@Param('id') id: string) {
+    await this.tagsService.remove(+id);
+
+    return {
+      message: this.localesService.translate('message.tag.deleteTagSuccess'),
+    };
   }
 }

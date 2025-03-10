@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTagsDto } from './dto/create-tags.dto';
 import { UpdateTagsDto } from './dto/update-tags.dto';
 import { DataSource } from 'typeorm';
@@ -77,11 +77,30 @@ export class TagsService {
     });
   }
 
-  update(id: number, updateTagsDto: UpdateTagsDto) {
-    return `This action updates a #${id} tags`;
+  async update(id: Tag['id'], updateTagsDto: UpdateTagsDto) {
+    const entity = await this.tagRepository.findOne({
+      where: {
+        id,
+      },
+    });
+
+    if (updateTagsDto.name && !updateTagsDto.slug) {
+      updateTagsDto.slug = generateSlug(updateTagsDto.name);
+    }
+
+    if (!entity) {
+      throw new NotFoundException(
+        this.localesService.translate('message.validation.sessionNotFound'),
+      );
+    }
+
+    return await this.tagRepository.save({
+      ...entity,
+      ...updateTagsDto,
+    });
   }
 
-  async remove(id: number): Promise<void> {
+  async remove(id: Tag['id']): Promise<void> {
     await this.tagRepository.softDelete(id);
   }
 }

@@ -47,12 +47,12 @@ export class CreatePostDto {
   @Length(3, 512)
   seoDescription?: string | null;
 
-  @ApiProperty({
-    example: 'This is the content of the post.',
-    description: 'Main content of the post',
-  })
-  @IsString()
-  content: string;
+  // @ApiProperty({
+  //   example: 'This is the content of the post.',
+  //   description: 'Main content of the post',
+  // })
+  // @IsString()
+  // content: string;
 
   @ApiProperty({
     example: 'draft',

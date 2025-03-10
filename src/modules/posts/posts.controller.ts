@@ -30,14 +30,20 @@ export class PostsController {
     return this.postsService.create(createPostDto);
   }
 
+  @ApiBearerAuth()
   @Get()
+  @Roles(EUserRole.ADMIN)
+  @UseGuards(JwtGuard, RolesGuard)
   findAll() {
     return this.postsService.findAll();
   }
 
+  @ApiBearerAuth()
+  @Roles(EUserRole.ADMIN)
+  @UseGuards(JwtGuard, RolesGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.postsService.findOne(+id);
+    return this.postsService.findById(+id);
   }
 
   @Patch(':id')
@@ -47,6 +53,6 @@ export class PostsController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.postsService.remove(+id);
+    return this.postsService.remove(id);
   }
 }

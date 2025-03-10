@@ -20,11 +20,11 @@ export class Post {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'varchar', length: 512 })
-  title: string;
+  @Column({ type: 'varchar', length: 512, nullable: true })
+  title?: string;
 
-  @Column({ type: 'varchar', length: 512, unique: true })
-  slug: string;
+  @Column({ type: 'varchar', length: 512, unique: true, nullable: true })
+  slug?: string;
 
   @Column({ type: 'varchar', length: 512, nullable: true })
   seoTitle?: string;
@@ -32,8 +32,11 @@ export class Post {
   @Column({ type: 'varchar', length: 512, nullable: true })
   seoDescription?: string;
 
-  @Column('text')
-  content: string;
+  @Column({
+    type: 'blob',
+    nullable: true,
+  })
+  content?: Buffer;
 
   @Column({
     type: 'enum',
