@@ -7,12 +7,15 @@ import { TransformInterceptor } from './utils/interceptors';
 import { configSwagger } from './config/api-docs.config';
 import validationOptions from './utils/validation-options';
 import { WsAdapter } from '@nestjs/platform-ws';
+import { initializeTransactionalContext } from 'typeorm-transactional';
 
 // import { ConfigService } from '@nestjs/config';
 // import { DatabaseConfig } from './config/configuration.config';
 // import { Logger } from '@nestjs/common';
 
 async function bootstrap() {
+  initializeTransactionalContext();
+
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.setGlobalPrefix('api');
   app.enableCors();

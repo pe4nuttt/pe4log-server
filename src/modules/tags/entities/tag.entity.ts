@@ -33,7 +33,9 @@ export class Tag {
   @DeleteDateColumn()
   deletedAt?: Date | null;
 
-  @ManyToMany(() => Post, (post) => post.tags)
+  @ManyToMany(() => Post, (post) => post.tags, {
+    cascade: true,
+  })
   @JoinTable({
     name: 'post_tags',
     joinColumn: { name: 'tag_id', referencedColumnName: 'id' },

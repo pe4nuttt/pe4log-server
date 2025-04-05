@@ -5,6 +5,7 @@ import { POST_HOCUSPOCUS_PREFIX } from 'src/utils/constants';
 import { PostRepository } from 'src/modules/posts/post.repository';
 import { PostsModule } from 'src/modules/posts/posts.module';
 import { TiptapTransformer } from '@hocuspocus/transformer';
+import { EHocuspocusEvents } from './hocuspocus.enum';
 
 export const HocuspocuImpl = Symbol('HocuspocuImpl');
 
@@ -31,6 +32,7 @@ const HocuspocusProvider: Provider = {
                   );
 
                   const postEntity = await postRepository.findOne({
+                    select: ['id', 'content'],
                     where: {
                       id: +postId,
                     },
@@ -55,11 +57,14 @@ const HocuspocusProvider: Provider = {
               })();
             });
           },
-          store: async ({ documentName, state }) => {
+          store: async ({ document, documentName, state }) => {
             try {
+              document.broadcastStateless(EHocuspocusEvents.DOCUMENT_SAVING);
+
               const postId = documentName.replace(POST_HOCUSPOCUS_PREFIX, '');
 
               const postEntity = await postRepository.findOne({
+                select: ['id', 'content'],
                 where: {
                   id: +postId,
                 },
@@ -71,6 +76,8 @@ const HocuspocusProvider: Provider = {
 
               postEntity.content = state;
               await postRepository.save(postEntity);
+
+              document.broadcastStateless(EHocuspocusEvents.DOCUMENT_SAVED);
 
               // await prisma.documents.update({
               //   where: {
@@ -84,6 +91,9 @@ const HocuspocusProvider: Provider = {
           },
         }),
       ],
+      // async onChange(data) {
+      //   console.log('onChange', data);
+      // },
     });
 
     return hocuspocus;

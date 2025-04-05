@@ -21,7 +21,7 @@ export class SortCategoryDto extends PickType(PaginationDto, [
   })
   @IsOptional()
   @IsString()
-  sortBy?: keyof Category = 'createdAt';
+  sortBy: keyof Category = 'createdAt';
 }
 
 export class GetListCategoriesDto extends IntersectionType(

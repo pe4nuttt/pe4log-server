@@ -6,6 +6,8 @@ import {
   IsString,
   Length,
   IsUUID,
+  IsArray,
+  IsInt,
 } from 'class-validator';
 import { EPostStatus } from 'src/utils/enums';
 
@@ -27,7 +29,7 @@ export class CreatePostDto {
   @IsOptional()
   @IsString()
   @Length(3, 255)
-  slug?: string | null;
+  slug?: string;
 
   @ApiPropertyOptional({
     example: 'My First Blog SEO Title',
@@ -36,7 +38,7 @@ export class CreatePostDto {
   @IsOptional()
   @IsString()
   @Length(3, 255)
-  seoTitle?: string | null;
+  seoTitle?: string;
 
   @ApiPropertyOptional({
     example: 'This is a short description for SEO purposes.',
@@ -45,7 +47,7 @@ export class CreatePostDto {
   @IsOptional()
   @IsString()
   @Length(3, 512)
-  seoDescription?: string | null;
+  seoDescription?: string;
 
   // @ApiProperty({
   //   example: 'This is the content of the post.',
@@ -63,21 +65,19 @@ export class CreatePostDto {
   status: EPostStatus;
 
   @ApiProperty({
-    example: '550e8400-e29b-41d4-a716-446655440001',
+    example: 1,
     description: 'ID of the category',
   })
   @IsOptional()
-  @IsUUID()
-  categoryId?: string | null;
+  @IsInt()
+  categoryId?: number | null;
 
   @ApiPropertyOptional({
-    example: [
-      '550e8400-e29b-41d4-a716-446655440002',
-      '550e8400-e29b-41d4-a716-446655440003',
-    ],
+    example: [1, 2],
     description: 'List of tag IDs',
   })
   @IsOptional()
-  @IsUUID('4', { each: true })
-  tagIds?: string[] | null;
+  @IsArray()
+  @IsInt({ each: true })
+  tagIds?: number[] | null;
 }

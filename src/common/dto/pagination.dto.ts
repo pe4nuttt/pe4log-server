@@ -21,7 +21,7 @@ export class PaginationDto {
   @Type(() => Number)
   @IsInt()
   @Min(1)
-  page?: number = 1;
+  page: number = 1;
 
   @ApiPropertyOptional({
     example: 10,
@@ -33,7 +33,7 @@ export class PaginationDto {
   @IsInt()
   @Min(1)
   @Max(100) // Limit max items per page to 100
-  limit?: number = 10;
+  limit: number = 10;
 
   @ApiPropertyOptional({
     example: 'createdAt',

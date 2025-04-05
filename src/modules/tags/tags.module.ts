@@ -8,6 +8,6 @@ import { TagRepository } from './tag.repository';
   imports: [LocalesModule],
   controllers: [TagsController],
   providers: [TagsService, TagRepository],
-  exports: [TagsService],
+  exports: [TagsService, TagRepository],
 })
 export class TagsModule {}

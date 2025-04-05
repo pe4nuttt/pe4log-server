@@ -35,6 +35,7 @@ export class Post {
   @Column({
     type: 'blob',
     nullable: true,
+    select: false,
   })
   content?: Buffer;
 
@@ -52,13 +53,16 @@ export class Post {
     eager: true,
     nullable: true,
   })
-  category?: Category;
+  category?: Category | null;
 
   @ManyToMany(() => Tag, (tag) => tag.posts)
   tags: Tag[];
 
   @OneToMany(() => Comment, (comment) => comment.post)
   comments: Comment[];
+
+  @Column({ type: 'date', nullable: true })
+  publishedAt?: Date | null;
 
   @CreateDateColumn()
   createdAt: Date;

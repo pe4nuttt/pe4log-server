@@ -22,7 +22,10 @@
     "deleteTagSuccess": "Delete tag successfully"
   },
   "post": {
-    "postNotFound": "Post not found"
+    "generatePostSuccess": "Generate new category successfully",
+    "postNotFound": "Post not found",
+    "updatePostSuccess": "Update post successfully",
+    "deletePostSuccess": "Delete post successfully"
   },
   "auth": {
     "loginSuccess": "Login successfully",

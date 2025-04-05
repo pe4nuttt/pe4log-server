@@ -18,7 +18,7 @@ export class SortTagDto extends PickType(PaginationDto, ['sortBy', 'order']) {
   })
   @IsOptional()
   @IsString()
-  sortBy?: keyof Tag = 'createdAt';
+  sortBy: keyof Tag = 'createdAt';
 }
 
 export class GetListTagsDto extends IntersectionType(

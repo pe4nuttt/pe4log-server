@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DataSource, DataSourceOptions } from 'typeorm';
+import { addTransactionalDataSource } from 'typeorm-transactional';
 
 @Module({
   // providers: [...databaseProviders],
@@ -33,8 +34,9 @@ import { DataSource, DataSourceOptions } from 'typeorm';
         } as DataSourceOptions;
       },
       dataSourceFactory: async (options) => {
-        const dataSource = await new DataSource(options).initialize();
-        return dataSource;
+        // const dataSource = await new DataSource(options).initialize();
+        // return dataSource;
+        return addTransactionalDataSource(new DataSource(options));
       },
       inject: [ConfigService],
     }),
