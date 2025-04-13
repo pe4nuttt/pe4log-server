@@ -23,6 +23,7 @@ const HocuspocusProvider: Provider = {
       extensions: [
         new Database({
           fetch: async ({ documentName }) => {
+            console.log('[FETCH]');
             return new Promise(async (resolve, reject) => {
               (async () => {
                 try {
@@ -91,6 +92,7 @@ const HocuspocusProvider: Provider = {
           },
         }),
       ],
+
       // async onChange(data) {
       //   console.log('onChange', data);
       // },

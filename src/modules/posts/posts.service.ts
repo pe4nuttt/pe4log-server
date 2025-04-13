@@ -21,6 +21,7 @@ import { EPostStatus } from 'src/utils/enums';
 import { GetListPostsDto } from './dto/query-post.dto';
 import { PaginationResponseDto } from 'src/common/dto/pagination-response.dto';
 import { AfterDate, BeforeDate, BetweenDates } from 'src/utils/date';
+import { FilesService } from 'src/files/files.service';
 
 @Injectable()
 export class PostsService {
@@ -29,6 +30,7 @@ export class PostsService {
     private readonly tagRepository: TagRepository,
     private readonly localesService: LocalesService,
     private readonly dataSource: DataSource,
+    private readonly fileService: FilesService,
   ) {}
 
   async generateNewPost(userId: number) {
@@ -66,6 +68,8 @@ export class PostsService {
       tagIds,
       createdAtFrom,
       createdAtTo,
+      categorySlug,
+      tagSlug,
     } = getListPostsDto;
 
     // const queryBuilder = this.postRepository
@@ -143,6 +147,16 @@ export class PostsService {
       where.tags = { id: In(tagIds) };
     }
 
+    if (tagSlug) {
+      where.tags = { slug: tagSlug };
+    }
+
+    if (categorySlug) {
+      where.category = {
+        slug: categorySlug,
+      };
+    }
+
     if (createdAtFrom && createdAtTo) {
       where.createdAt = BetweenDates(createdAtFrom, createdAtTo);
     } else if (createdAtFrom) {
@@ -160,7 +174,7 @@ export class PostsService {
     });
 
     return new PaginationResponseDto<Post>({
-      items,
+      items: items,
       page: all ? 1 : page,
       limit: all ? totalCount : limit,
       totalPages: all ? 1 : Math.ceil(totalCount / limit),
@@ -177,6 +191,33 @@ export class PostsService {
         tags: true,
       },
     });
+  }
+
+  async getPostHTMLContent(id: Post['id']) {
+    return await this.postRepository.findOne({
+      select: ['id', 'htmlContent'],
+      where: {
+        id,
+      },
+    });
+  }
+
+  async savePostHTMLContent(id: Post['id'], htmlContent: string) {
+    const entity = await this.postRepository.findOne({
+      where: {
+        id,
+      },
+    });
+
+    if (!entity) {
+      throw new NotFoundException(
+        this.localesService.translate('message.post.postNotFound'),
+      );
+    }
+
+    entity.htmlContent = htmlContent;
+
+    return await this.postRepository.save(entity);
   }
 
   @Transactional()
@@ -226,5 +267,51 @@ export class PostsService {
 
   async remove(id: string) {
     await this.postRepository.softDelete(id);
+  }
+
+  async uploadCoverImage(id: Post['id'], file: Express.Multer.File) {
+    const entity = await this.postRepository.findOne({
+      where: {
+        id,
+      },
+    });
+
+    if (!entity) {
+      throw new NotFoundException(
+        this.localesService.translate('message.post.postNotFound'),
+      );
+    }
+
+    const coverImage = await this.fileService.uploadFile(file, {
+      folder: `post/${entity.id}/cover-image`,
+      filename_override: `${file.filename}-${Date.now().toString()}`,
+    });
+
+    await this.postRepository.save({
+      ...entity,
+      coverImage: coverImage.secure_url,
+    });
+
+    return {
+      imageUrl: coverImage.secure_url,
+    };
+  }
+
+  async viewPost(slug: Post['slug']) {
+    const entity = await this.postRepository.findOne({
+      where: {
+        slug,
+      },
+    });
+
+    if (!entity) {
+      throw new NotFoundException(
+        this.localesService.translate('message.post.postNotFound'),
+      );
+    }
+
+    entity.views = (entity.views || 0) + 1;
+
+    await this.postRepository.save(entity);
   }
 }

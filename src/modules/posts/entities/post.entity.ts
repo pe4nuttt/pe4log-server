@@ -32,12 +32,21 @@ export class Post {
   @Column({ type: 'varchar', length: 512, nullable: true })
   seoDescription?: string;
 
+  @Column({ type: 'varchar', length: 1000, nullable: true })
+  description?: string;
+
+  @Column({ type: 'text', nullable: true })
+  coverImage?: string;
+
   @Column({
     type: 'blob',
     nullable: true,
     select: false,
   })
   content?: Buffer;
+
+  @Column({ type: 'text', nullable: true, select: false })
+  htmlContent?: string;
 
   @Column({
     type: 'enum',
@@ -61,7 +70,7 @@ export class Post {
   @OneToMany(() => Comment, (comment) => comment.post)
   comments: Comment[];
 
-  @Column({ type: 'date', nullable: true })
+  @Column({ type: 'timestamp', nullable: true })
   publishedAt?: Date | null;
 
   @CreateDateColumn()
@@ -72,4 +81,7 @@ export class Post {
 
   @DeleteDateColumn()
   deletedAt?: Date | null;
+
+  @Column({ type: 'int', default: 0 })
+  views: number;
 }

@@ -8,6 +8,8 @@ import {
   IsUUID,
   IsArray,
   IsInt,
+  ValidateIf,
+  IsDateString,
 } from 'class-validator';
 import { EPostStatus } from 'src/utils/enums';
 
@@ -18,7 +20,7 @@ export class CreatePostDto {
   })
   @IsNotEmpty()
   @IsString()
-  @Length(3, 255)
+  @Length(3, 512)
   title: string;
 
   @ApiProperty({
@@ -28,8 +30,17 @@ export class CreatePostDto {
   })
   @IsOptional()
   @IsString()
-  @Length(3, 255)
+  @Length(3, 512)
   slug?: string;
+
+  @ApiProperty({
+    example: 'My First Blog Post description',
+    description: 'Description of the post',
+  })
+  @IsOptional()
+  @IsString()
+  @Length(3, 1000)
+  description?: string;
 
   @ApiPropertyOptional({
     example: 'My First Blog SEO Title',
@@ -37,7 +48,7 @@ export class CreatePostDto {
   })
   @IsOptional()
   @IsString()
-  @Length(3, 255)
+  @Length(3, 512)
   seoTitle?: string;
 
   @ApiPropertyOptional({
@@ -63,6 +74,15 @@ export class CreatePostDto {
   })
   @IsEnum(EPostStatus)
   status: EPostStatus;
+
+  @ApiProperty({
+    example: '2025-01-01 00:00:00',
+    description: 'Date and time when the post will be published',
+  })
+  @ValidateIf((obj) => obj.status === EPostStatus.PUBLISHED)
+  @IsNotEmpty()
+  @IsDateString()
+  publishedAt?: Date | null;
 
   @ApiProperty({
     example: 1,

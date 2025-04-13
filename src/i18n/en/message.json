@@ -25,7 +25,8 @@
     "generatePostSuccess": "Generate new category successfully",
     "postNotFound": "Post not found",
     "updatePostSuccess": "Update post successfully",
-    "deletePostSuccess": "Delete post successfully"
+    "deletePostSuccess": "Delete post successfully",
+    "uploadPostCoverSuccess": "Upload post cover successfully"
   },
   "auth": {
     "loginSuccess": "Login successfully",

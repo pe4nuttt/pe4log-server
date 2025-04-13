@@ -52,6 +52,20 @@ export class FilterPostDto {
   categoryId?: number | null;
 
   @ApiPropertyOptional({
+    description: 'Filter by category slug',
+  })
+  @IsOptional()
+  @IsString()
+  categorySlug?: string | null;
+
+  @ApiPropertyOptional({
+    description: 'Filter by tag slug',
+  })
+  @IsOptional()
+  @IsString()
+  tagSlug?: string | null;
+
+  @ApiPropertyOptional({
     example: '2025-01-01',
   })
   @Transform(({ value }) => value || null)
