@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  HttpStatus,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -23,6 +24,10 @@ import { randomStringGenerator } from '@nestjs/common/utils/random-string-genera
 import { SignInDto } from './dto/signIn.dto';
 import { SignInResponseDto } from './dto/signInResponse.dto';
 import { IJwtPayload } from './interfaces/jwtPayload.interface';
+import { ISocialUserData } from './interfaces/social.interface';
+import { NullableType } from 'src/utils/types';
+import { UserProvidersService } from '../user-providers/user-providers.service';
+import { Transactional } from 'typeorm-transactional';
 
 @Injectable()
 export class AuthService {
@@ -34,6 +39,7 @@ export class AuthService {
     private readonly configService: ConfigService<AllConfigType>,
     private readonly jwtService: JwtService,
     private readonly sessionService: SessionService,
+    private readonly userProviderService: UserProvidersService,
   ) {}
 
   async signUp(signUpDto: SignUpDto): Promise<SignUpResponseDto> {
@@ -57,7 +63,7 @@ export class AuthService {
         ...signUpDto,
         password: hashedPassword,
         role: EUserRole.USER,
-        authProvider: EUserAuthProvider.EMAIL,
+        // authProvider: EUserAuthProvider.EMAIL,
       });
 
       const hash = crypto
@@ -99,13 +105,13 @@ export class AuthService {
       );
     }
 
-    if (user.authProvider != EUserAuthProvider.EMAIL) {
-      throw new UnprocessableEntityException(
-        this.localesService.translate(
-          'message.validation.needLoginViaEmailProvider',
-        ),
-      );
-    }
+    // if (user.authProvider != EUserAuthProvider.EMAIL) {
+    //   throw new UnprocessableEntityException(
+    //     this.localesService.translate(
+    //       'message.validation.needLoginViaEmailProvider',
+    //     ),
+    //   );
+    // }
 
     if (!user.password)
       throw new UnprocessableEntityException(
@@ -251,5 +257,95 @@ export class AuthService {
 
   async me(userJwtPayload: IJwtPayload) {
     return this.userService.findById(userJwtPayload.id);
+  }
+
+  @Transactional()
+  async validateSocialLogin(
+    authProvider: EUserAuthProvider,
+    socialData: ISocialUserData,
+  ) {
+    let user: NullableType<User> = null;
+    const socialEmail = socialData.email?.toLowerCase();
+    let userByEmail: NullableType<User> = null;
+
+    if (socialEmail) {
+      userByEmail = await this.userService.findByEmail(socialEmail);
+    }
+
+    if (socialData.socialId) {
+      user = await this.userService.findBySocialIdAndProvider(
+        socialData.socialId,
+        authProvider,
+      );
+    }
+
+    if (user) {
+      if (user && !userByEmail) {
+        user.email = socialEmail;
+        await this.userService.update(user.id, user);
+      }
+    } else if (userByEmail && socialData.socialId) {
+      user = userByEmail;
+
+      await this.userProviderService.create({
+        userId: user.id,
+        authProvider,
+        authProviderId: socialData.socialId,
+      });
+    } else if (socialData.socialId) {
+      user = await this.userService.create({
+        email: socialEmail,
+        firstName: socialData.firstName,
+        lastName: socialData.lastName,
+        password: null,
+        role: EUserRole.USER,
+        profilePicture: socialData.image,
+        userProviders: [
+          {
+            authProvider,
+            authProviderId: socialData.socialId,
+          },
+        ],
+      } as User);
+
+      await this.userProviderService.create({
+        userId: user.id,
+        authProvider,
+        authProviderId: socialData.socialId,
+      });
+    }
+
+    if (!user) {
+      throw new UnprocessableEntityException({
+        status: HttpStatus.UNPROCESSABLE_ENTITY,
+        errors: this.localesService.translate('message.user.userNotFound'),
+      });
+    }
+
+    const hash = crypto
+      .createHash('sha256')
+      .update(randomStringGenerator())
+      .digest('hex');
+
+    const session = await this.sessionService.create({
+      user: user,
+      hash,
+    });
+
+    const { accessToken, refreshToken, tokenExpires } =
+      await this.getTokensData({
+        id: user.id,
+        role: user.role,
+        email: user.email,
+        sessionId: session.id,
+        hash,
+      });
+
+    return {
+      accessToken,
+      refreshToken,
+      tokenExpires,
+      user,
+    };
   }
 }

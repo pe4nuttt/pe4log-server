@@ -1,6 +1,7 @@
 import { Exclude } from 'class-transformer';
 import { Comment } from 'src/modules/comments/entities/comment.entity';
 import { Post } from 'src/modules/posts/entities/post.entity';
+import { UserProvider } from 'src/modules/user-providers/entities/user-provider.entity';
 import { EUserAuthProvider } from 'src/utils/enums';
 import {
   Entity,
@@ -31,15 +32,15 @@ export class User {
   @Column({ length: 255, nullable: true })
   password: string;
 
-  @Column({
-    type: 'enum',
-    enum: EUserAuthProvider,
-    default: EUserAuthProvider.EMAIL,
-  })
-  authProvider: EUserAuthProvider;
+  // @Column({
+  //   type: 'enum',
+  //   enum: EUserAuthProvider,
+  //   default: EUserAuthProvider.EMAIL,
+  // })
+  // authProvider: EUserAuthProvider;
 
-  @Column({ length: 255, nullable: true })
-  authProviderId?: string | null;
+  // @Column({ length: 255, nullable: true })
+  // authProviderId?: string | null;
 
   @Column({
     type: 'enum',
@@ -47,6 +48,9 @@ export class User {
     default: 'user',
   })
   role: 'admin' | 'user';
+
+  @Column({ type: 'text', nullable: true })
+  profilePicture?: string | null;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -59,4 +63,7 @@ export class User {
 
   @OneToMany(() => Comment, (comment) => comment.user)
   comments?: Comment[] | null;
+
+  @OneToMany(() => UserProvider, (userProvider) => userProvider.user)
+  userProviders?: UserProvider[] | null;
 }

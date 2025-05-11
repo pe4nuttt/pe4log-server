@@ -4,6 +4,9 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import {
   authConfig,
+  authFacebookConfig,
+  authGithubConfig,
+  authGoogleConfig,
   databaseConfig,
   redisConfig,
 } from './config/configuration.config';
@@ -23,13 +26,21 @@ import { TagsModule } from './modules/tags/tags.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { HocuspocusModule } from './hocuspocus/hocuspocus.module';
 import { SyncModule } from './sync/sync.module';
+import { UserProvidersModule } from './modules/user-providers/user-providers.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: process.env.NODE_ENV === 'development' ? '.env.dev' : '.env',
-      load: [databaseConfig, redisConfig, authConfig],
+      load: [
+        databaseConfig,
+        redisConfig,
+        authConfig,
+        authGoogleConfig,
+        authGithubConfig,
+        authFacebookConfig,
+      ],
       cache: true,
       expandVariables: true,
       validationSchema: Joi.object({
@@ -55,6 +66,7 @@ import { SyncModule } from './sync/sync.module';
     CloudinaryModule,
     HocuspocusModule,
     SyncModule,
+    UserProvidersModule,
   ],
   controllers: [AppController, TagsController, CommentsController],
   providers: [AppService],

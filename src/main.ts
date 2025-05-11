@@ -8,6 +8,7 @@ import { configSwagger } from './config/api-docs.config';
 import validationOptions from './utils/validation-options';
 import { WsAdapter } from '@nestjs/platform-ws';
 import { initializeTransactionalContext } from 'typeorm-transactional';
+import * as cookieParser from 'cookie-parser';
 
 // import { ConfigService } from '@nestjs/config';
 // import { DatabaseConfig } from './config/configuration.config';
@@ -19,6 +20,7 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.setGlobalPrefix('api');
   app.enableCors();
+  app.use(cookieParser.default());
   configSwagger(app);
   // const configService = app.get(ConfigService);
   // const logger = new Logger(bootstrap.name);

@@ -7,10 +7,27 @@ import { JwtModule } from '@nestjs/jwt';
 import { SessionModule } from '../session/session.module';
 import { JwtStrategy } from './strategies/jwtStrategy';
 import { JwtRefreshStrategy } from './strategies/jwtRefreshStrategy';
+import { GoogleStrategy } from './strategies/google.strategy';
+import { GithubStrategy } from './strategies/github.strategy';
+import { FacebookStrategy } from './strategies/facebook.strategy';
+import { UserProvidersModule } from '../user-providers/user-providers.module';
 
 @Module({
-  imports: [UsersModule, LocalesModule, JwtModule.register({}), SessionModule],
-  providers: [AuthService, JwtStrategy, JwtRefreshStrategy],
+  imports: [
+    UsersModule,
+    LocalesModule,
+    JwtModule.register({}),
+    SessionModule,
+    UserProvidersModule,
+  ],
+  providers: [
+    AuthService,
+    JwtStrategy,
+    JwtRefreshStrategy,
+    GoogleStrategy,
+    GithubStrategy,
+    FacebookStrategy,
+  ],
   controllers: [AuthController],
 })
 export class AuthModule {}

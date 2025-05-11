@@ -26,12 +26,34 @@ export interface AuthConfig {
   forgotExpires: string;
   confirmEmailSecret: string;
   confirmEmailExpires: string;
+  clientCallbackUrl: string;
+}
+
+export interface AuthGoogleConfig {
+  clientId: string;
+  clientSecret: string;
+  callbackUrl: string;
+}
+
+export interface AuthGithubConfig {
+  clientId: string;
+  clientSecret: string;
+  callbackUrl: string;
+}
+
+export interface AuthFacebookConfig {
+  clientId: string;
+  clientSecret: string;
+  callbackUrl: string;
 }
 
 export interface AllConfigType {
   auth: AuthConfig;
   database: DatabaseConfig;
   redis: RedisConfig;
+  authGoogle: AuthGoogleConfig;
+  authGithub: AuthGithubConfig;
+  authFacebook: AuthFacebookConfig;
   test: {
     test: string;
   };
@@ -72,5 +94,30 @@ export const authConfig = (): { auth: AuthConfig } => ({
     forgotExpires: process.env.AUTH_FORGOT_TOKEN_EXPIRES_IN,
     confirmEmailSecret: process.env.AUTH_CONFIRM_EMAIL_SECRET,
     confirmEmailExpires: process.env.AUTH_CONFIRM_EMAIL_TOKEN_EXPIRES_IN,
+    clientCallbackUrl: process.env.AUTH_FRONTEND_URL,
+  },
+});
+
+export const authGoogleConfig = (): { authGoogle: AuthGoogleConfig } => ({
+  authGoogle: {
+    clientId: process.env.AUTH_GOOGLE_CLIENT_ID,
+    clientSecret: process.env.AUTH_GOOGLE_CLIENT_SECRET,
+    callbackUrl: process.env.AUTH_GOOGLE_CALLBACK_URL,
+  },
+});
+
+export const authGithubConfig = (): { authGithub: AuthGithubConfig } => ({
+  authGithub: {
+    clientId: process.env.AUTH_GITHUB_CLIENT_ID,
+    clientSecret: process.env.AUTH_GITHUB_CLIENT_SECRET,
+    callbackUrl: process.env.AUTH_GITHUB_CALLBACK_URL,
+  },
+});
+
+export const authFacebookConfig = (): { authFacebook: AuthFacebookConfig } => ({
+  authFacebook: {
+    clientId: process.env.AUTH_FACEBOOK_CLIENT_ID,
+    clientSecret: process.env.AUTH_FACEBOOK_CLIENT_SECRET,
+    callbackUrl: process.env.AUTH_FACEBOOK_CALLBACK_URL,
   },
 });

@@ -88,10 +88,17 @@ export class PostsController {
     return this.postsService.findById(+id);
   }
 
-  @Get(':id/html')
-  async getPostHTMLContent(@Param('id') id: string) {
+  @Get(':slug/html')
+  async getPostHTMLContent(@Param('slug') slug: string) {
     return {
-      data: (await this.postsService.getPostHTMLContent(+id)).htmlContent,
+      data: (await this.postsService.getPostHTMLContent(slug)).htmlContent,
+    };
+  }
+
+  @Get(':slug/client')
+  async getPostDetailClient(@Param('slug') slug: string) {
+    return {
+      data: await this.postsService.getPostByClient(slug),
     };
   }
 

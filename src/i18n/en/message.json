@@ -28,6 +28,9 @@
     "deletePostSuccess": "Delete post successfully",
     "uploadPostCoverSuccess": "Upload post cover successfully"
   },
+  "user": {
+    "userNotFound": "User not found"
+  },
   "auth": {
     "loginSuccess": "Login successfully",
     "signupSuccess": "Sign up successfully"

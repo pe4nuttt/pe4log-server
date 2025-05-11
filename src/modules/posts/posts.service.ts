@@ -193,13 +193,41 @@ export class PostsService {
     });
   }
 
-  async getPostHTMLContent(id: Post['id']) {
-    return await this.postRepository.findOne({
-      select: ['id', 'htmlContent'],
+  async getPostHTMLContent(slug: Post['slug']) {
+    const entity = await this.postRepository.findOne({
+      select: ['id', 'slug', 'htmlContent'],
       where: {
-        id,
+        slug,
       },
     });
+
+    if (!entity) {
+      throw new NotFoundException(
+        this.localesService.translate('message.post.postNotFound'),
+      );
+    }
+
+    return entity;
+  }
+
+  async getPostByClient(slug: Post['slug']) {
+    const entity = await this.postRepository.findOne({
+      where: {
+        slug: slug,
+        status: EPostStatus.PUBLISHED,
+      },
+      relations: {
+        tags: true,
+      },
+    });
+
+    if (!entity) {
+      throw new NotFoundException(
+        this.localesService.translate('message.post.postNotFound'),
+      );
+    }
+
+    return entity;
   }
 
   async savePostHTMLContent(id: Post['id'], htmlContent: string) {

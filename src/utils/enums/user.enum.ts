@@ -4,7 +4,7 @@ export enum EUserRole {
 }
 
 export enum EUserAuthProvider {
-  EMAIL = 'email',
+  // EMAIL = 'email',
   GOOGLE = 'google',
   FACEBOOK = 'facebook',
   GITHUB = 'github',
