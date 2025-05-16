@@ -1,3 +1,7 @@
+export interface AppConfig {
+  port: number;
+}
+
 export interface DatabaseConfig {
   url?: string;
   type: string;
@@ -33,6 +37,7 @@ export interface AuthGoogleConfig {
   clientId: string;
   clientSecret: string;
   callbackUrl: string;
+  refreshToken: string;
 }
 
 export interface AuthGithubConfig {
@@ -48,6 +53,7 @@ export interface AuthFacebookConfig {
 }
 
 export interface AllConfigType {
+  app: AppConfig;
   auth: AuthConfig;
   database: DatabaseConfig;
   redis: RedisConfig;
@@ -59,6 +65,11 @@ export interface AllConfigType {
   };
 }
 
+export const appConfig = (): { app: AppConfig } => ({
+  app: {
+    port: process.env.APP_PORT ? parseInt(process.env.APP_PORT) : 8080,
+  },
+});
 export const databaseConfig = (): { database: DatabaseConfig } => ({
   database: {
     type: process.env.DATABASE_TYPE,
@@ -103,6 +114,7 @@ export const authGoogleConfig = (): { authGoogle: AuthGoogleConfig } => ({
     clientId: process.env.AUTH_GOOGLE_CLIENT_ID,
     clientSecret: process.env.AUTH_GOOGLE_CLIENT_SECRET,
     callbackUrl: process.env.AUTH_GOOGLE_CALLBACK_URL,
+    refreshToken: process.env.AUTH_GOOGLE_REFRESH_TOKEN,
   },
 });
 

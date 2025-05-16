@@ -1,0 +1,37 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - ${APP_PORT}:8080
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - .:/app
+      - /app/node_modules
+
+  redis:
+    image: redis
+    restart: always
+    ports:
+      - 6379:6379
+    volumes:
+      - redis_data:/data
+
+  db:
+    image: mysql:8.0
+    restart: always
+    ports:
+      - 3307:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: Aomg15122001
+      MYSQL_DATABASE:
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  redis_data:
+    driver: local
+  db_data:

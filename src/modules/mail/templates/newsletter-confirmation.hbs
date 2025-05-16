@@ -1,0 +1,110 @@
+<html lang='en'>
+  <head>
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+    <title>Email Confirmation</title>
+  </head>
+  <body
+    style="margin: 0; padding: 0; font-family: 'Outfit', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8f9fa; color: #212529;"
+  >
+    <table
+      role='presentation'
+      cellspacing='0'
+      cellpadding='0'
+      border='0'
+      width='100%'
+      style='max-width: 600px; margin: 0 auto; border-collapse: collapse;'
+    >
+      <!-- Header with Logo and Accent Bar -->
+      <tr>
+        <td
+          style='height: 5px; background: linear-gradient(90deg, #ff6b6b, #6b47ff);'
+        ></td>
+      </tr>
+      <tr>
+        <td
+          style='text-align: center; padding: 30px 20px 10px 20px; background-color: #ffffff;'
+        >
+          <img
+            src='/api/placeholder/120/40'
+            alt='Company Logo'
+            width='120'
+            style='display: block; margin: 0 auto;'
+          />
+        </td>
+      </tr>
+
+      <!-- Main Content -->
+      <tr>
+        <td style='background-color: #ffffff; padding: 20px 30px 40px 30px;'>
+          <h1
+            style='margin-top: 0; margin-bottom: 20px; font-size: 24px; font-weight: 700; color: #212529; text-align: center;'
+          >Confirm Your Subscription</h1>
+
+          <p
+            style='margin-bottom: 25px; font-size: 16px; line-height: 1.6; color: #495057;'
+          >Hey {{email}},</p>
+
+          <p
+            style='margin-bottom: 25px; font-size: 16px; line-height: 1.6; color: #495057;'
+          >Thanks for subscribing to our newsletter! Just one quick step to
+            complete your subscription — please confirm your email address by
+            clicking the button below:</p>
+
+          <!-- CTA Button -->
+          <table
+            role='presentation'
+            cellspacing='0'
+            cellpadding='0'
+            border='0'
+            style='margin: 30px auto;'
+          >
+            <tr>
+              <td
+                style='background-color: #6b47ff; border-radius: 8px; text-align: center; box-shadow: 0 4px 6px rgba(107, 71, 255, 0.25);'
+              >
+                <a
+                  href='{{confirmUrl}}'
+                  target='_blank'
+                  style='padding: 14px 32px; color: #ffffff; text-decoration: none; display: inline-block; font-weight: 600; font-size: 16px;'
+                >Confirm Email Address</a>
+              </td>
+            </tr>
+          </table>
+
+          <p
+            style='margin-bottom: 25px; font-size: 16px; line-height: 1.6; color: #495057;'
+          >If the button doesn't work, you can also copy and paste this link
+            into your browser:</p>
+
+          <p
+            style='margin-bottom: 30px; font-size: 14px; line-height: 1.4; color: #6c757d; word-break: break-all; text-align: center;'
+          ><a
+              href='{{confirmUrl}}'
+              style='color: #6b47ff; text-decoration: none;'
+            >{{confirmUrl}}</a></p>
+
+          <p
+            style='margin-bottom: 5px; font-size: 16px; line-height: 1.6; color: #495057;'
+          >Once confirmed, you'll start receiving our updates and insights right
+            in your inbox!</p>
+        </td>
+      </tr>
+
+      <!-- Footer -->
+      <tr>
+        <td
+          style='background-color: #f8f9fa; padding: 25px 30px; border-top: 1px solid #e9ecef; text-align: center;'
+        >
+          <p
+            style='margin-bottom: 15px; font-size: 14px; line-height: 1.6; color: #6c757d;'
+          >If you didn't request this subscription, please disregard this email.</p>
+
+          <p
+            style='margin-bottom: 0; font-size: 14px; line-height: 1.6; color: #6c757d;'
+          >© 2025 Your Company. All rights reserved.</p>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

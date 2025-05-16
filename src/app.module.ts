@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import {
+  appConfig,
   authConfig,
   authFacebookConfig,
   authGithubConfig,
@@ -27,6 +28,8 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { HocuspocusModule } from './hocuspocus/hocuspocus.module';
 import { SyncModule } from './sync/sync.module';
 import { UserProvidersModule } from './modules/user-providers/user-providers.module';
+import { MailModule } from './modules/mail/mail.module';
+import { NewsletterModule } from './modules/newsletter/newsletter.module';
 
 @Module({
   imports: [
@@ -34,6 +37,7 @@ import { UserProvidersModule } from './modules/user-providers/user-providers.mod
       isGlobal: true,
       envFilePath: process.env.NODE_ENV === 'development' ? '.env.dev' : '.env',
       load: [
+        appConfig,
         databaseConfig,
         redisConfig,
         authConfig,
@@ -67,6 +71,8 @@ import { UserProvidersModule } from './modules/user-providers/user-providers.mod
     HocuspocusModule,
     SyncModule,
     UserProvidersModule,
+    MailModule,
+    NewsletterModule,
   ],
   controllers: [AppController, TagsController, CommentsController],
   providers: [AppService],
