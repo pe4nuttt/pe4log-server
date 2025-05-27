@@ -20,7 +20,9 @@ export class CreateUserDto {
     example: 'Anh',
   })
   @IsNotEmpty({
-    message: i18nValidationMessage<I18nTranslations>('message'),
+    message: i18nValidationMessage<I18nTranslations>(
+      'message.validation.firstNameRequired',
+    ),
   })
   @MaxLength(50)
   firstName: string;

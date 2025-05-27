@@ -8,7 +8,8 @@
     "emailNotFound": "Email not found",
     "needLoginViaEmailProvider": "You need to login via emaill and password",
     "incorrectPassword": "Password is incorrect",
-    "categoryExist": "Category with this name or slug already exists"
+    "categoryExist": "Category with this name or slug already exists",
+    "firstNameRequired": "First name is required"
   },
   "category": {
     "createCategorySuccess": "Create new category successfully",
