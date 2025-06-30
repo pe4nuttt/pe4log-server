@@ -4,6 +4,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Ip,
   Post,
   Request,
   Res,
@@ -48,8 +49,8 @@ export class AuthController {
   }
 
   @Post('sign-in')
-  async signIn(@Body() signInDto: SignInDto) {
-    const data = await this.authService.signIn(signInDto);
+  async signIn(@Body() signInDto: SignInDto, @Ip() ip: string) {
+    const data = await this.authService.signIn(signInDto, ip);
 
     return {
       message: this.localesService.translate('message.auth.loginSuccess'),

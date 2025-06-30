@@ -20,6 +20,7 @@ import { GetListCategoriesDto } from './dto/query-category.dto';
 import { Roles } from 'src/utils/decorators/roles.decorator';
 import { EUserRole } from 'src/utils/enums';
 import { LocalesService } from 'src/services/i18n/i18n.service';
+import { RolesGuard } from 'src/utils/guards/roles.guard';
 
 @Controller('categories')
 @ApiTags('Categories')
@@ -30,7 +31,7 @@ export class CategoriesController {
   ) {}
 
   @ApiBearerAuth()
-  @UseGuards(JwtGuard)
+  @UseGuards(JwtGuard, RolesGuard)
   @Roles(EUserRole.ADMIN)
   @Post()
   async create(@Body() createCategoryDto: CreateCategoryDto) {
@@ -54,7 +55,7 @@ export class CategoriesController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(JwtGuard)
+  @UseGuards(JwtGuard, RolesGuard)
   @Roles(EUserRole.ADMIN)
   @Patch(':id')
   async update(
@@ -71,7 +72,7 @@ export class CategoriesController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(JwtGuard)
+  @UseGuards(JwtGuard, RolesGuard)
   @Roles(EUserRole.ADMIN)
   @Delete(':id')
   async remove(@Param('id') id: string) {

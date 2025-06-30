@@ -8,6 +8,7 @@ import {
   startOfDay,
   subYears,
 } from 'date-fns';
+import { date } from 'joi';
 
 // TypeORM Query Operators
 // export const BetweenDates = (from: Date | string, to: Date | string) =>
@@ -18,6 +19,10 @@ import {
 //     ),
 //     format(typeof to === 'string' ? new Date(to) : to, 'YYYY-MM-DD HH:MM:ss'),
 //   );
+
+export const parseISODate = (dateString: string | Date): Date => {
+  return isDate(dateString) ? dateString : parseISO(dateString);
+};
 
 export const BetweenDates = (from: Date | string, to: Date | string) => {
   const fromDate = isDate(from) ? from : parseISO(from);

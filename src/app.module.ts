@@ -30,6 +30,8 @@ import { SyncModule } from './sync/sync.module';
 import { UserProvidersModule } from './modules/user-providers/user-providers.module';
 import { MailModule } from './modules/mail/mail.module';
 import { NewsletterModule } from './modules/newsletter/newsletter.module';
+import { AiModule } from './modules/ai/ai.module';
+import { LoginAttemptsModule } from './modules/login-attempts/login-attempts.module';
 
 @Module({
   imports: [
@@ -73,6 +75,8 @@ import { NewsletterModule } from './modules/newsletter/newsletter.module';
     UserProvidersModule,
     MailModule,
     NewsletterModule,
+    AiModule,
+    LoginAttemptsModule,
   ],
   controllers: [AppController, TagsController, CommentsController],
   providers: [AppService],

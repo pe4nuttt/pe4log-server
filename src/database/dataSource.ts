@@ -1,5 +1,11 @@
 import 'reflect-metadata';
+import * as dotenv from 'dotenv';
 import { DataSource, DataSourceOptions } from 'typeorm';
+import path from 'path';
+
+dotenv.config({ path: path.join(__dirname, `./.env.dev`) });
+
+console.log(process.env.NODE_ENV);
 
 export const AppDataSource = new DataSource({
   type: process.env.DATABASE_TYPE,

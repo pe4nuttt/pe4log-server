@@ -2,7 +2,7 @@ import { Category } from 'src/modules/categories/entities/category.entity';
 import { Comment } from 'src/modules/comments/entities/comment.entity';
 import { Tag } from 'src/modules/tags/entities/tag.entity';
 import { User } from 'src/modules/users/entities/user.entity';
-import { EPostStatus } from 'src/utils/enums';
+import { EPostLang, EPostStatus } from 'src/utils/enums';
 import {
   Column,
   CreateDateColumn,
@@ -84,4 +84,11 @@ export class Post {
 
   @Column({ type: 'int', default: 0 })
   views: number;
+
+  @Column({
+    type: 'enum',
+    enum: EPostLang,
+    default: EPostLang.VI,
+  })
+  lang: EPostLang = EPostLang.VI;
 }

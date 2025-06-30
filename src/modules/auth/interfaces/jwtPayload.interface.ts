@@ -8,3 +8,7 @@ export interface IJwtPayload {
   sessionId: Session['id'];
   hash: Session['hash'];
 }
+
+export interface IAccessTokenPayload extends Omit<IJwtPayload, 'hash'> {}
+export interface IRefreshTokenPayload
+  extends Pick<IJwtPayload, 'sessionId' | 'hash'> {}

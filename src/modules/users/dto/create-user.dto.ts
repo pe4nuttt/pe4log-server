@@ -12,7 +12,7 @@ import {
 import { i18nValidationMessage } from 'nestjs-i18n';
 import { I18nTranslations } from 'src/generated/i18n.generated';
 import { SLUG_REGEX } from 'src/utils/constants';
-import { EUserRole } from 'src/utils/enums';
+import { EUserRole, EUserStatus } from 'src/utils/enums';
 
 export class CreateUserDto {
   @ApiProperty({
@@ -37,6 +37,14 @@ export class CreateUserDto {
 
   @ApiProperty({
     type: 'string',
+    example: 'tienanh1512',
+  })
+  @IsNotEmpty()
+  @MaxLength(255)
+  username: string;
+
+  @ApiProperty({
+    type: 'string',
     example: 'test@gmail.com',
   })
   @IsNotEmpty()
@@ -57,5 +65,12 @@ export class CreateUserDto {
     example: EUserRole.USER,
     enum: EUserRole,
   })
-  role: EUserRole.USER;
+  role: EUserRole;
+
+  @ApiProperty({
+    type: 'string',
+    example: EUserStatus.ACTIVE,
+    enum: EUserStatus,
+  })
+  status: EUserStatus;
 }

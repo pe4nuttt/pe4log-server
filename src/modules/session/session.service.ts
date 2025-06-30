@@ -3,6 +3,8 @@ import { Session } from './entities/session.entity';
 import { SessionRepository } from './session.repository';
 import { NullableType } from 'joi';
 import { LocalesService } from 'src/services/i18n/i18n.service';
+import { User } from '../users/entities/user.entity';
+import { Not } from 'typeorm';
 
 @Injectable()
 export class SessionService {
@@ -51,6 +53,21 @@ export class SessionService {
   async deleteById(id: Session['id']) {
     return this.sessionRepository.softDelete({
       id,
+    });
+  }
+
+  async deleteByUserId(id: User['id']) {
+    return this.sessionRepository.softDelete({
+      user: {
+        id,
+      },
+    });
+  }
+
+  async deleteByUserIdExceptCurrent(id: User['id'], sessionId: Session['id']) {
+    return this.sessionRepository.softDelete({
+      user: { id },
+      id: Not(sessionId),
     });
   }
 }

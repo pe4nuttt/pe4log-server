@@ -11,6 +11,7 @@ import { GoogleStrategy } from './strategies/google.strategy';
 import { GithubStrategy } from './strategies/github.strategy';
 import { FacebookStrategy } from './strategies/facebook.strategy';
 import { UserProvidersModule } from '../user-providers/user-providers.module';
+import { LoginAttemptsModule } from '../login-attempts/login-attempts.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { UserProvidersModule } from '../user-providers/user-providers.module';
     JwtModule.register({}),
     SessionModule,
     UserProvidersModule,
+    LoginAttemptsModule,
   ],
   providers: [
     AuthService,

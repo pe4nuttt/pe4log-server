@@ -1,8 +1,9 @@
 import { Exclude } from 'class-transformer';
 import { Comment } from 'src/modules/comments/entities/comment.entity';
+import { LoginAttempt } from 'src/modules/login-attempts/entities/login-attempt.entity';
 import { Post } from 'src/modules/posts/entities/post.entity';
 import { UserProvider } from 'src/modules/user-providers/entities/user-provider.entity';
-import { EUserAuthProvider } from 'src/utils/enums';
+import { EUserAuthProvider, EUserRole, EUserStatus } from 'src/utils/enums';
 import {
   Entity,
   Column,
@@ -32,6 +33,9 @@ export class User {
   @Column({ length: 255, nullable: true })
   password: string;
 
+  @Column({ length: 255, unique: true })
+  username: string;
+
   // @Column({
   //   type: 'enum',
   //   enum: EUserAuthProvider,
@@ -41,13 +45,19 @@ export class User {
 
   // @Column({ length: 255, nullable: true })
   // authProviderId?: string | null;
+  @Column({
+    type: 'enum',
+    enum: EUserRole,
+    default: EUserRole.USER,
+  })
+  role: EUserRole;
 
   @Column({
     type: 'enum',
-    enum: ['admin', 'user'],
-    default: 'user',
+    enum: EUserStatus,
+    default: EUserStatus.ACTIVE,
   })
-  role: 'admin' | 'user';
+  status?: EUserStatus = EUserStatus.ACTIVE;
 
   @Column({ type: 'text', nullable: true })
   profilePicture?: string | null;
@@ -60,6 +70,9 @@ export class User {
 
   @OneToMany(() => Post, (post) => post.author)
   posts?: Post[] | null;
+
+  @OneToMany(() => LoginAttempt, (loginAttempt) => loginAttempt.user)
+  loginAttempts?: LoginAttempt[] | null;
 
   @OneToMany(() => Comment, (comment) => comment.user)
   comments?: Comment[] | null;

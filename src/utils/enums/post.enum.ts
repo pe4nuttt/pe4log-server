@@ -3,3 +3,8 @@ export enum EPostStatus {
   PUBLISHED = 'published',
   ARCHIVED = 'archived',
 }
+
+export enum EPostLang {
+  EN = 'en-US',
+  VI = 'vi-VN',
+}

@@ -21,7 +21,6 @@ export const databaseProviders = [
           migrationsDir: __dirname + '/database/migrations/**/*{.ts,.js}',
         },
       } as DataSourceOptions);
-      console.log(__dirname + '/../**/*.entity{.ts,.js}');
 
       return dataSource.initialize();
     },

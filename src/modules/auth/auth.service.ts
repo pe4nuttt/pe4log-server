@@ -23,11 +23,17 @@ import * as crypto from 'crypto';
 import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
 import { SignInDto } from './dto/signIn.dto';
 import { SignInResponseDto } from './dto/signInResponse.dto';
-import { IJwtPayload } from './interfaces/jwtPayload.interface';
+import {
+  IAccessTokenPayload,
+  IJwtPayload,
+  IRefreshTokenPayload,
+} from './interfaces/jwtPayload.interface';
 import { ISocialUserData } from './interfaces/social.interface';
 import { NullableType } from 'src/utils/types';
 import { UserProvidersService } from '../user-providers/user-providers.service';
 import { Transactional } from 'typeorm-transactional';
+import { hashPassword } from 'src/utils/auth';
+import { LoginAttemptsService } from '../login-attempts/login-attempts.service';
 
 @Injectable()
 export class AuthService {
@@ -40,6 +46,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly sessionService: SessionService,
     private readonly userProviderService: UserProvidersService,
+    private readonly loginAttemptsService: LoginAttemptsService,
   ) {}
 
   async signUp(signUpDto: SignUpDto): Promise<SignUpResponseDto> {
@@ -54,16 +61,14 @@ export class AuthService {
         );
       }
 
-      const hashedPassword = await bcrypt.hash(
-        signUpDto.password,
-        this.SALT_ROUND,
-      );
+      const hashedPassword = await hashPassword(signUpDto.password);
 
       const user = await this.userService.create({
         ...signUpDto,
         password: hashedPassword,
         role: EUserRole.USER,
         // authProvider: EUserAuthProvider.EMAIL,
+        username: `${signUpDto.email}.${Date.now()}`,
       });
 
       const hash = crypto
@@ -96,7 +101,7 @@ export class AuthService {
     }
   }
 
-  async signIn(signInDto: SignInDto): Promise<SignInResponseDto> {
+  async signIn(signInDto: SignInDto, ip?: string): Promise<SignInResponseDto> {
     const user = await this.userService.findByEmail(signInDto.email);
 
     if (!user) {
@@ -118,12 +123,20 @@ export class AuthService {
         this.localesService.translate('message.validation.incorrectPassword'),
       );
 
-    const isValid = bcrypt.compare(signInDto.password, user.password);
+    const isValid = await bcrypt.compare(signInDto.password, user.password);
 
-    if (!isValid)
+    if (!isValid) {
+      this.loginAttemptsService.create({
+        userId: user.id,
+        isSuccessful: false,
+        failureReason: 'Incorrect password',
+        ip: ip,
+      });
+
       throw new UnprocessableEntityException(
         this.localesService.translate('message.validation.incorrectPassword'),
       );
+    }
 
     const hash = crypto
       .createHash('sha256')
@@ -143,6 +156,12 @@ export class AuthService {
         sessionId: session.id,
         hash,
       });
+
+    this.loginAttemptsService.create({
+      userId: user.id,
+      isSuccessful: true,
+      ip: ip,
+    });
 
     return {
       accessToken,
@@ -218,34 +237,30 @@ export class AuthService {
     );
 
     const tokenExpires = Date.now() + ms(tokenExpiresIn as ms.StringValue);
+    const accessTokenPayload: IAccessTokenPayload = {
+      id: data.id,
+      role: data.role,
+      email: data.email,
+      sessionId: data.sessionId,
+    };
+    const refreshTokenPayload: IRefreshTokenPayload = {
+      hash: data.hash,
+      sessionId: data.sessionId,
+    };
 
     const [accessToken, refreshToken] = await Promise.all([
-      await this.jwtService.signAsync(
-        {
-          id: data.id,
-          role: data.role,
-          email: data.email,
-          sessionId: data.sessionId,
-        },
-        {
-          expiresIn: tokenExpiresIn,
-          secret: this.configService.getOrThrow('auth.secret', {
-            infer: true,
-          }),
-        },
-      ),
-      await this.jwtService.signAsync(
-        {
-          sessionId: data.sessionId,
-          hash: data.hash,
-        },
-        {
-          expiresIn: refreshTokenExpires,
-          secret: this.configService.getOrThrow('auth.refreshSecret', {
-            infer: true,
-          }),
-        },
-      ),
+      await this.jwtService.signAsync(accessTokenPayload, {
+        expiresIn: tokenExpiresIn,
+        secret: this.configService.getOrThrow('auth.secret', {
+          infer: true,
+        }),
+      }),
+      await this.jwtService.signAsync(refreshTokenPayload, {
+        expiresIn: refreshTokenExpires,
+        secret: this.configService.getOrThrow('auth.refreshSecret', {
+          infer: true,
+        }),
+      }),
     ]);
 
     return {
@@ -306,6 +321,7 @@ export class AuthService {
             authProviderId: socialData.socialId,
           },
         ],
+        username: `${socialData.email}.${Date.now()}`,
       } as User);
 
       await this.userProviderService.create({

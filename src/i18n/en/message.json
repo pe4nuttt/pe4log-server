@@ -30,7 +30,9 @@
     "uploadPostCoverSuccess": "Upload post cover successfully"
   },
   "user": {
-    "userNotFound": "User not found"
+    "userNotFound": "User not found",
+    "deleteUserSuccess": "Delete user successfully",
+    "updateUserSuccess": "Update user successfully"
   },
   "auth": {
     "loginSuccess": "Login successfully",

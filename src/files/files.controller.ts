@@ -14,6 +14,7 @@ import { JwtGuard } from 'src/modules/auth/guards/jwtGuard';
 import { Roles } from 'src/utils/decorators/roles.decorator';
 import { EUserRole } from 'src/utils/enums';
 import { ApiFile } from 'src/utils/decorators/file.decorator';
+import { RolesGuard } from 'src/utils/guards/roles.guard';
 
 @Controller('files')
 export class FilesController {
@@ -23,7 +24,7 @@ export class FilesController {
   ) {}
 
   @ApiBearerAuth()
-  @UseGuards(JwtGuard)
+  @UseGuards(JwtGuard, RolesGuard)
   @Roles(EUserRole.ADMIN)
   @Post('blog-images/:postId')
   @ApiFile('file', true)

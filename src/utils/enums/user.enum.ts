@@ -3,6 +3,11 @@ export enum EUserRole {
   USER = 'user',
 }
 
+export enum EUserStatus {
+  ACTIVE = 'active',
+  INACTIVE = 'inactive',
+}
+
 export enum EUserAuthProvider {
   // EMAIL = 'email',
   GOOGLE = 'google',

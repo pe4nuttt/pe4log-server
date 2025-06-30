@@ -18,6 +18,7 @@ import { JwtGuard } from '../auth/guards/jwtGuard';
 import { Roles } from 'src/utils/decorators/roles.decorator';
 import { EUserRole } from 'src/utils/enums';
 import { LocalesService } from 'src/services/i18n/i18n.service';
+import { RolesGuard } from 'src/utils/guards/roles.guard';
 
 @Controller('tags')
 export class TagsController {
@@ -27,7 +28,7 @@ export class TagsController {
   ) {}
 
   @ApiBearerAuth()
-  @UseGuards(JwtGuard)
+  @UseGuards(JwtGuard, RolesGuard)
   @Roles(EUserRole.ADMIN)
   @Post()
   async create(@Body() createTagsDto: CreateTagsDto) {
@@ -49,7 +50,7 @@ export class TagsController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(JwtGuard)
+  @UseGuards(JwtGuard, RolesGuard)
   @Roles(EUserRole.ADMIN)
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateTagsDto: UpdateTagsDto) {
@@ -61,7 +62,7 @@ export class TagsController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(JwtGuard)
+  @UseGuards(JwtGuard, RolesGuard)
   @Roles(EUserRole.ADMIN)
   @Delete(':id')
   async remove(@Param('id') id: string) {
