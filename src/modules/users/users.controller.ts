@@ -1,10 +1,15 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  HttpStatus,
   Param,
+  ParseFilePipeBuilder,
   Patch,
+  Post,
   Query,
+  UploadedFile,
   UseGuards,
 } from '@nestjs/common';
 import { JwtGuard } from '../auth/guards/jwtGuard';
@@ -20,11 +25,13 @@ import { UserDecorator } from 'src/utils/decorators/user.decorator';
 import { IJwtPayload } from '../auth/interfaces/jwtPayload.interface';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdateMeDto } from './dto/update-me.dto';
+import { CreateUserDto } from './dto/create-user.dto';
+import { ApiFile } from 'src/utils/decorators/file.decorator';
 
 @Controller('users')
 export class UsersController {
   constructor(
-    private readonly usersSerivce: UsersService,
+    private readonly usersService: UsersService,
     private readonly localesService: LocalesService,
   ) {}
 
@@ -33,14 +40,14 @@ export class UsersController {
   @Roles(EUserRole.ADMIN)
   @Get()
   getListUsers(@Query() getListUsersDto: GetListUsersDto) {
-    return this.usersSerivce.findManyWithPagination(getListUsersDto);
+    return this.usersService.findManyWithPagination(getListUsersDto);
   }
 
   @ApiBearerAuth()
   @UseGuards(JwtGuard)
   @Get('me')
   getCurrentUser(@UserDecorator() user: IJwtPayload) {
-    return this.usersSerivce.findById(user.id);
+    return this.usersService.findById(user.id);
   }
 
   @ApiBearerAuth()
@@ -50,7 +57,7 @@ export class UsersController {
     @UserDecorator() user: IJwtPayload,
     @Body() updateUserDto: UpdateMeDto,
   ) {
-    const data = await this.usersSerivce.updateMe(user, updateUserDto);
+    const data = await this.usersService.updateMe(user, updateUserDto);
 
     return {
       message: this.localesService.translate('message.user.updateUserSuccess'),
@@ -63,14 +70,27 @@ export class UsersController {
   @UseGuards(JwtGuard, RolesGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.usersSerivce.findById(+id);
+    return this.usersService.findById(+id);
   }
 
   @ApiBearerAuth()
   @UseGuards(JwtGuard)
   @Get('by-username/:username')
   findByUsername(@Param('username') username: string) {
-    return this.usersSerivce.findByUsername(username);
+    return this.usersService.findByUsername(username);
+  }
+
+  @ApiBearerAuth()
+  @Roles(EUserRole.ADMIN)
+  @UseGuards(JwtGuard, RolesGuard)
+  @Post()
+  async create(@Body() createUserDto: CreateUserDto) {
+    const data = await this.usersService.create(createUserDto);
+
+    return {
+      message: this.localesService.translate('message.user.createUserSuccess'),
+      data,
+    };
   }
 
   @ApiBearerAuth()
@@ -82,11 +102,52 @@ export class UsersController {
     @UserDecorator() user: IJwtPayload,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    const data = await this.usersSerivce.update(+id, updateUserDto);
+    const data = await this.usersService.update(+id, updateUserDto);
 
     return {
       message: this.localesService.translate('message.user.updateUserSuccess'),
       data,
+    };
+  }
+
+  @ApiBearerAuth()
+  @Roles(EUserRole.ADMIN)
+  @UseGuards(JwtGuard, RolesGuard)
+  @Delete(':id')
+  async remove(@Param('id') id: string, @UserDecorator() user: IJwtPayload) {
+    await this.usersService.deleteUser(+id);
+    return {
+      message: this.localesService.translate('message.user.deleteUserSuccess'),
+    };
+  }
+
+  @ApiBearerAuth()
+  @Roles(EUserRole.ADMIN)
+  @UseGuards(JwtGuard, RolesGuard)
+  @ApiFile('file', true)
+  @Post(':id/profile-image')
+  async uploadProfileImage(
+    @Param('id') id: string,
+    @UploadedFile(
+      new ParseFilePipeBuilder()
+        .addFileTypeValidator({
+          fileType: 'image/*',
+        })
+        .addMaxSizeValidator({
+          maxSize: 10 * 1024 * 1024,
+          message: 'File should be less than 10MB',
+        })
+        .build({
+          errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        }),
+    )
+    file: Express.Multer.File,
+  ) {
+    return {
+      message: this.localesService.translate(
+        'message.user.uploadProfileImageSuccess',
+      ),
+      data: await this.usersService.updateUserAvatar(+id, file),
     };
   }
 }

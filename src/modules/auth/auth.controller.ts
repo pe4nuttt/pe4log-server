@@ -106,6 +106,7 @@ export class AuthController {
       await this.authService.validateSocialLogin(
         EUserAuthProvider.GOOGLE,
         req.user,
+        req.ip,
       );
 
     res.cookie(PREFERENCE_KEYS.REFRESH_TOKEN, refreshToken, {
@@ -137,6 +138,7 @@ export class AuthController {
       await this.authService.validateSocialLogin(
         EUserAuthProvider.GITHUB,
         req.user,
+        req.ip,
       );
 
     res.cookie(PREFERENCE_KEYS.REFRESH_TOKEN, refreshToken, {
@@ -168,6 +170,7 @@ export class AuthController {
       await this.authService.validateSocialLogin(
         EUserAuthProvider.FACEBOOK,
         req.user,
+        req.ip,
       );
 
     res.cookie(PREFERENCE_KEYS.REFRESH_TOKEN, refreshToken, {

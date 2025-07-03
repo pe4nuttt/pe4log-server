@@ -10,7 +10,7 @@ export class LoginAttempt {
     eager: true,
     nullable: true,
   })
-  user: User;
+  user?: User;
 
   @Column({ type: 'varchar', length: '45', nullable: true })
   ip?: string;

@@ -56,9 +56,9 @@ export class CreateUserDto {
     type: 'string',
     example: 'Abcd@1234',
   })
-  @IsOptional()
+  @IsNotEmpty()
   @IsStrongPassword()
-  password?: string;
+  password: string;
 
   @ApiProperty({
     type: 'string',

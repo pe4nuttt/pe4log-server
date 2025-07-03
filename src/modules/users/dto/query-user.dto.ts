@@ -61,7 +61,7 @@ export class SortUserDto extends PickType(PaginationDto, ['sortBy', 'order']) {
   })
   @IsOptional()
   @IsString()
-  sortBy: keyof User = 'createdAt';
+  sortBy: keyof User | 'fullName' = 'createdAt';
 }
 
 export class GetListUsersDto extends IntersectionType(

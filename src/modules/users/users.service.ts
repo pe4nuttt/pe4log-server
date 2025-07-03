@@ -13,6 +13,8 @@ import { Transactional } from 'typeorm-transactional';
 import { SessionService } from '../session/session.service';
 import { UpdateMeDto } from './dto/update-me.dto';
 import { IJwtPayload } from '../auth/interfaces/jwtPayload.interface';
+import { CreateUserDto } from './dto/create-user.dto';
+import { FilesService } from 'src/files/files.service';
 
 @Injectable()
 export class UsersService {
@@ -20,6 +22,7 @@ export class UsersService {
     private readonly usersRepository: UserRepository,
     private readonly localesService: LocalesService,
     private readonly sessionService: SessionService,
+    private readonly fileService: FilesService,
   ) {}
 
   async findById(id: User['id']): Promise<NullableType<User>> {
@@ -45,6 +48,7 @@ export class UsersService {
   async create(
     data: Omit<User, 'id' | 'createdAt' | 'deletedAt' | 'updatedAt'>,
   ): Promise<User> {
+    data.password = await hashPassword(data.password);
     const newUser = this.usersRepository.create(data);
     return await this.usersRepository.save(newUser);
   }
@@ -63,15 +67,22 @@ export class UsersService {
       );
     }
 
+    let hashedPassword = entity.password;
+
     if (updateUserData.password) {
-      updateUserData.password = await hashPassword(updateUserData.password);
+      entity.passwordChangedAt = new Date();
+      hashedPassword = await hashPassword(updateUserData.password);
+
       await this.sessionService.deleteByUserId(id);
     }
 
     const res = await this.usersRepository.save({
       ...entity,
       ...updateUserData,
+      password: hashedPassword,
     });
+
+    delete res.password;
 
     return res;
   }
@@ -174,7 +185,11 @@ export class UsersService {
       });
     }
 
-    queryBuilder.orderBy(sortBy, order);
+    if (sortBy === 'fullName') {
+      queryBuilder.orderBy(`CONCAT(user.firstName, ' ', user.lastName)`, order);
+    } else {
+      queryBuilder.orderBy(sortBy, order);
+    }
 
     if (!all) {
       const skip = (page - 1) * limit;
@@ -190,5 +205,52 @@ export class UsersService {
       totalPages: all ? 1 : Math.ceil(totalCount / limit),
       totalCount,
     });
+  }
+
+  async deleteUser(id: User['id']): Promise<void> {
+    const user = await this.usersRepository.findOne({
+      where: { id },
+    });
+
+    if (!user) {
+      throw new NotFoundException(
+        this.localesService.translate('message.user.userNotFound'),
+      );
+    }
+
+    await this.usersRepository.softDelete(user);
+  }
+
+  async updateUserAvatar(id: User['id'], file: Express.Multer.File) {
+    const user = await this.usersRepository.findOne({
+      where: { id },
+    });
+
+    if (!user) {
+      throw new NotFoundException(
+        this.localesService.translate('message.user.userNotFound'),
+      );
+    }
+
+    const imageData = await this.fileService.uploadFile(file, {
+      folder: `user/${user.id}`,
+      filename_override: `${file.filename}-${Date.now().toString()}`,
+      transformation: {
+        width: 2000,
+        height: 1500,
+        crop: 'limit',
+        quality: 'auto',
+      },
+    });
+
+    await this.usersRepository.save({
+      ...user,
+      profilePicture: imageData.public_id,
+    });
+
+    return {
+      imageUrl: imageData.secure_url,
+      imageKey: imageData.public_id,
+    };
   }
 }

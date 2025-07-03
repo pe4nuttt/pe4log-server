@@ -32,7 +32,9 @@
   "user": {
     "userNotFound": "User not found",
     "deleteUserSuccess": "Delete user successfully",
-    "updateUserSuccess": "Update user successfully"
+    "updateUserSuccess": "Update user successfully",
+    "createUserSuccess": "Create new user successfully",
+    "uploadProfileImageSuccess": "Upload profile image successfully"
   },
   "auth": {
     "loginSuccess": "Login successfully",

@@ -18,6 +18,9 @@ export class SessionService {
       where: {
         id,
       },
+      relations: {
+        user: true,
+      },
     });
   }
 

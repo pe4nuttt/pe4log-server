@@ -4,8 +4,10 @@ export class CreateLoginAttemptDto {
   @ApiProperty({
     type: 'number',
     example: 1,
+    nullable: true,
+    required: false,
   })
-  userId: number;
+  userId?: number;
 
   @ApiProperty({
     type: 'string',

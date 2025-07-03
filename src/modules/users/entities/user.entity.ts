@@ -79,4 +79,14 @@ export class User {
 
   @OneToMany(() => UserProvider, (userProvider) => userProvider.user)
   userProviders?: UserProvider[] | null;
+
+  @Column({
+    type: 'timestamp',
+    nullable: true,
+  })
+  passwordChangedAt?: Date;
+
+  constructor(partial: Partial<User>) {
+    Object.assign(this, partial);
+  }
 }

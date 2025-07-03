@@ -40,6 +40,8 @@ export type I18nTranslations = {
             "userNotFound": string;
             "deleteUserSuccess": string;
             "updateUserSuccess": string;
+            "createUserSuccess": string;
+            "uploadProfileImageSuccess": string;
         };
         "auth": {
             "loginSuccess": string;

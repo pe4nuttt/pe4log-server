@@ -40,7 +40,7 @@ export class AuthService {
   private SALT_ROUND = 11;
 
   constructor(
-    private readonly userService: UsersService,
+    private readonly usersService: UsersService,
     private readonly localesService: LocalesService,
     private readonly configService: ConfigService<AllConfigType>,
     private readonly jwtService: JwtService,
@@ -51,7 +51,9 @@ export class AuthService {
 
   async signUp(signUpDto: SignUpDto): Promise<SignUpResponseDto> {
     try {
-      const isExistedUser = await this.userService.findByEmail(signUpDto.email);
+      const isExistedUser = await this.usersService.findByEmail(
+        signUpDto.email,
+      );
 
       if (isExistedUser) {
         throw new ConflictException(
@@ -63,7 +65,7 @@ export class AuthService {
 
       const hashedPassword = await hashPassword(signUpDto.password);
 
-      const user = await this.userService.create({
+      const user = await this.usersService.create({
         ...signUpDto,
         password: hashedPassword,
         role: EUserRole.USER,
@@ -102,9 +104,15 @@ export class AuthService {
   }
 
   async signIn(signInDto: SignInDto, ip?: string): Promise<SignInResponseDto> {
-    const user = await this.userService.findByEmail(signInDto.email);
+    const user = await this.usersService.findByEmail(signInDto.email);
 
     if (!user) {
+      this.loginAttemptsService.create({
+        isSuccessful: false,
+        failureReason: 'User not found',
+        ip: ip,
+      });
+
       throw new NotFoundException(
         this.localesService.translate('message.validation.emailNotFound'),
       );
@@ -189,7 +197,7 @@ export class AuthService {
       .update(randomStringGenerator())
       .digest('hex');
 
-    const user = await this.userService.findById(session.user.id);
+    const user = await this.usersService.findById(session.user.id);
 
     if (!user?.role) {
       throw new UnauthorizedException();
@@ -271,24 +279,25 @@ export class AuthService {
   }
 
   async me(userJwtPayload: IJwtPayload) {
-    return this.userService.findById(userJwtPayload.id);
+    return this.usersService.findById(userJwtPayload.id);
   }
 
   @Transactional()
   async validateSocialLogin(
     authProvider: EUserAuthProvider,
     socialData: ISocialUserData,
+    ip?: string,
   ) {
     let user: NullableType<User> = null;
     const socialEmail = socialData.email?.toLowerCase();
     let userByEmail: NullableType<User> = null;
 
     if (socialEmail) {
-      userByEmail = await this.userService.findByEmail(socialEmail);
+      userByEmail = await this.usersService.findByEmail(socialEmail);
     }
 
     if (socialData.socialId) {
-      user = await this.userService.findBySocialIdAndProvider(
+      user = await this.usersService.findBySocialIdAndProvider(
         socialData.socialId,
         authProvider,
       );
@@ -297,7 +306,7 @@ export class AuthService {
     if (user) {
       if (user && !userByEmail) {
         user.email = socialEmail;
-        await this.userService.update(user.id, user);
+        await this.usersService.update(user.id, user);
       }
     } else if (userByEmail && socialData.socialId) {
       user = userByEmail;
@@ -308,7 +317,7 @@ export class AuthService {
         authProviderId: socialData.socialId,
       });
     } else if (socialData.socialId) {
-      user = await this.userService.create({
+      user = await this.usersService.create({
         email: socialEmail,
         firstName: socialData.firstName,
         lastName: socialData.lastName,
@@ -332,6 +341,12 @@ export class AuthService {
     }
 
     if (!user) {
+      this.loginAttemptsService.create({
+        isSuccessful: false,
+        failureReason: 'User not found',
+        ip: ip,
+      });
+
       throw new UnprocessableEntityException({
         status: HttpStatus.UNPROCESSABLE_ENTITY,
         errors: this.localesService.translate('message.user.userNotFound'),
@@ -356,6 +371,12 @@ export class AuthService {
         sessionId: session.id,
         hash,
       });
+
+    this.loginAttemptsService.create({
+      userId: user.id,
+      isSuccessful: true,
+      ip: ip,
+    });
 
     return {
       accessToken,

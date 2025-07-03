@@ -31,9 +31,11 @@ export class LoginAttemptsService {
 
     try {
       const loginAttempt = this.loginAttemptRepository.create({
-        user: {
-          id: userId,
-        },
+        user: userId
+          ? {
+              id: userId,
+            }
+          : null,
         ip,
         isSuccessful,
         failureReason,
