@@ -9,6 +9,7 @@ import { NullableType } from 'joi';
 import { Tag } from './entities/tag.entity';
 import { PaginationResponseDto } from 'src/common/dto/pagination-response.dto';
 import { GetListTagsDto } from './dto/query-tag.dto';
+import { EPostStatus } from 'src/utils/enums';
 
 @Injectable()
 export class TagsService {
@@ -67,6 +68,34 @@ export class TagsService {
       totalPages: all ? 1 : Math.ceil(totalCount / limit),
       totalCount,
     });
+  }
+
+  async getTopTags(limit: number): Promise<
+    {
+      id: Tag['id'];
+      name: Tag['name'];
+      slug: Tag['slug'];
+      postCount: number;
+    }[]
+  > {
+    const { entities, raw } = await this.tagRepository
+      .createQueryBuilder('tag')
+      .leftJoinAndSelect('tag.posts', 'post')
+      .select([
+        'tag.id',
+        'tag.name',
+        'tag.slug',
+        `COUNT(CASE WHEN post.status = '${EPostStatus.PUBLISHED}' THEN 1 END) AS postCount`,
+      ])
+      .groupBy('tag.id')
+      .orderBy('postCount', 'DESC')
+      .limit(limit)
+      .getRawAndEntities();
+
+    return entities.map((entity, index) => ({
+      ...entity,
+      postCount: parseInt(raw[index].postCount, 10) || 0,
+    }));
   }
 
   async findById(id: Tag['id']): Promise<NullableType<Tag>> {

@@ -3,6 +3,7 @@ import { CreateLoginAttemptDto } from './dto/create-login-attempt.dto';
 import { UpdateLoginAttemptDto } from './dto/update-login-attempt.dto';
 import { LoginAttemptRepository } from './login-attempts.repository';
 import axios from 'axios';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class LoginAttemptsService {
@@ -52,6 +53,13 @@ export class LoginAttemptsService {
 
   findAll() {
     return `This action returns all loginAttempts`;
+  }
+
+  async findByUserId(userId: User['id']) {
+    return await this.loginAttemptRepository.find({
+      where: { user: { id: userId } },
+      order: { createdAt: 'DESC' },
+    });
   }
 
   findOne(id: number) {

@@ -1,4 +1,5 @@
 import { Exclude } from 'class-transformer';
+import { CommentReaction } from 'src/modules/comment-reactions/entities/comment-reaction.entity';
 import { Comment } from 'src/modules/comments/entities/comment.entity';
 import { LoginAttempt } from 'src/modules/login-attempts/entities/login-attempt.entity';
 import { Post } from 'src/modules/posts/entities/post.entity';
@@ -76,6 +77,11 @@ export class User {
 
   @OneToMany(() => Comment, (comment) => comment.user)
   comments?: Comment[] | null;
+
+  @OneToMany(() => CommentReaction, (commentReaction) => commentReaction.user, {
+    eager: false,
+  })
+  commentReactions?: CommentReaction[] | null;
 
   @OneToMany(() => UserProvider, (userProvider) => userProvider.user)
   userProviders?: UserProvider[] | null;

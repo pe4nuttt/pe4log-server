@@ -5,8 +5,6 @@ import path from 'path';
 
 dotenv.config({ path: path.join(__dirname, `./.env.dev`) });
 
-console.log(process.env.NODE_ENV);
-
 export const AppDataSource = new DataSource({
   type: process.env.DATABASE_TYPE,
   // url: process.env.DATABASE_URL,
@@ -16,10 +14,10 @@ export const AppDataSource = new DataSource({
   password: process.env.DATABASE_PASSWORD,
   database: process.env.DATABASE_NAME,
   entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-  migrations: [__dirname + '/database/migrations/**/*{.ts,.js}'],
+  migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
   migrationsRun: true,
   cli: {
-    migrationsDir: __dirname + '/database/migrations/**/*{.ts,.js}',
+    migrationsDir: __dirname + '/migrations/**/*{.ts,.js}',
   },
   autoLoadEntities: true,
   synchronize: false,

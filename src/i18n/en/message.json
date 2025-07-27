@@ -45,5 +45,17 @@
     "sendSubscriptionNewsletterFailed": "Send subscription newsletter failed",
     "confirmSubscriptionSuccess": "Confirm subscription successfully",
     "confirmSubscriptionFailed": "Confirm subscription failed"
+  },
+  "comment": {
+    "maxNestedComment": "Max comment nesting reached",
+    "maxCommentReached": "Max comment reached",
+    "commentNotFound": "Comment not found",
+    "addCommentSuccess": "Add new comment successfully",
+    "editCommentSuccess": "Edit comment successfully",
+    "deleteCommentSuccess": "Delete comment successfully",
+    "commentLiked": "Comment liked",
+    "likeRemoved": "Like removed",
+    "commentDisliked": "Comment disliked",
+    "dislikeRemoved": "Dislike removed"
   }
 }

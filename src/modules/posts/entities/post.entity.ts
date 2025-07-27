@@ -24,7 +24,9 @@ export class Post {
   @Column({ type: 'varchar', length: 512, nullable: true })
   title?: string;
 
-  @Index()
+  @Index({
+    unique: true,
+  })
   @Column({ type: 'varchar', length: 512, unique: true, nullable: true })
   slug?: string;
 

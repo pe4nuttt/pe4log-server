@@ -1,3 +1,4 @@
+import { CommentReaction } from 'src/modules/comment-reactions/entities/comment-reaction.entity';
 import { Post } from 'src/modules/posts/entities/post.entity';
 import { User } from 'src/modules/users/entities/user.entity';
 import {
@@ -8,10 +9,16 @@ import {
   Tree,
   TreeChildren,
   TreeParent,
+  CreateDateColumn,
+  UpdateDateColumn,
+  DeleteDateColumn,
+  JoinColumn,
+  Index,
+  OneToMany,
 } from 'typeorm';
 
 @Entity('comments')
-@Tree('nested-set')
+@Index('idx_comment_slug_path', ['post.slug', 'path'])
 export class Comment {
   @PrimaryGeneratedColumn()
   id: number;
@@ -23,14 +30,34 @@ export class Comment {
   user: User;
 
   @ManyToOne(() => Post, (post) => post.comments, { onDelete: 'CASCADE' })
+  @JoinColumn({
+    name: 'postSlug',
+    referencedColumnName: 'slug',
+    foreignKeyConstraintName: 'FK_comment_post_slug',
+  })
   post: Post;
 
-  @TreeParent()
-  parentComment: Comment;
+  @OneToMany(
+    () => CommentReaction,
+    (commentReaction) => commentReaction.comment,
+    {
+      eager: false,
+    },
+  )
+  commentReactions?: CommentReaction[] | null;
 
-  @TreeChildren()
-  childComments: Comment[];
+  @Column({ type: 'varchar', length: 255 })
+  path: string;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({ type: 'int' })
+  depth: number;
+
+  @CreateDateColumn()
   createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt?: Date | null;
+
+  @DeleteDateColumn()
+  deletedAt?: Date | null;
 }

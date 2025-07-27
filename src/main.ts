@@ -8,9 +8,11 @@ import { configSwagger } from './config/api-docs.config';
 import validationOptions from './utils/validation-options';
 import { WsAdapter } from '@nestjs/platform-ws';
 import { initializeTransactionalContext } from 'typeorm-transactional';
-import * as cookieParser from 'cookie-parser';
 import { ConfigService } from '@nestjs/config';
 import { AllConfigType } from './config/configuration.config';
+import * as cookieParser from 'cookie-parser';
+import morgan from 'morgan';
+import helmet from 'helmet';
 // import { DatabaseConfig } from './config/configuration.config';
 // import { Logger } from '@nestjs/common';
 
@@ -20,7 +22,9 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.setGlobalPrefix('api');
   app.enableCors();
+  app.use(helmet());
   app.use(cookieParser.default());
+  app.use(morgan('tiny'));
   configSwagger(app);
   const configService: ConfigService<AllConfigType> = app.get(ConfigService);
   // const logger = new Logger(bootstrap.name);

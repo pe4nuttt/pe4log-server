@@ -1,5 +1,11 @@
 import { User } from 'src/modules/users/entities/user.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class LoginAttempt {
@@ -23,4 +29,7 @@ export class LoginAttempt {
 
   @Column({ type: 'boolean', default: false })
   isSuccessful: boolean;
+
+  @CreateDateColumn()
+  createdAt: Date;
 }

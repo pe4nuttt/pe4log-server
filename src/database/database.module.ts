@@ -12,8 +12,6 @@ import { addTransactionalDataSource } from 'typeorm-transactional';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => {
-        console.log(__dirname + '/../**/*.entity{.ts,.js}');
-
         return {
           type: configService.get<string>('DATABASE_TYPE'),
           // url: configService.get<string>('DATABASE_URL'),
@@ -28,9 +26,11 @@ import { addTransactionalDataSource } from 'typeorm-transactional';
           cli: {
             migrationsDir: __dirname + '/database/migrations/**/*{.ts,.js}',
           },
-          synchronize: configService.get('DATABASE_SYNCHRONIZE', {
-            infer: true,
-          }),
+          // synchronize: configService.get('DATABASE_SYNCHRONIZE', {
+          //   infer: true,
+          // }),
+          synchronize: false,
+          logging: ['query', 'error'],
         } as DataSourceOptions;
       },
       dataSourceFactory: async (options) => {

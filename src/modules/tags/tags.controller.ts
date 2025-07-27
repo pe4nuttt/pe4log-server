@@ -44,6 +44,12 @@ export class TagsController {
     return this.tagsService.findManyWithPagination(getListTagsDto);
   }
 
+  @Get('top')
+  getTopTags(@Query('limit') limit: string) {
+    const limitNumber = parseInt(limit, 10) || 10;
+    return this.tagsService.getTopTags(limitNumber);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.tagsService.findById(+id);

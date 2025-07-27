@@ -53,6 +53,18 @@ export type I18nTranslations = {
             "confirmSubscriptionSuccess": string;
             "confirmSubscriptionFailed": string;
         };
+        "comment": {
+            "maxNestedComment": string;
+            "maxCommentReached": string;
+            "commentNotFound": string;
+            "addCommentSuccess": string;
+            "editCommentSuccess": string;
+            "deleteCommentSuccess": string;
+            "commentLiked": string;
+            "likeRemoved": string;
+            "commentDisliked": string;
+            "dislikeRemoved": string;
+        };
     };
 };
 /* prettier-ignore */

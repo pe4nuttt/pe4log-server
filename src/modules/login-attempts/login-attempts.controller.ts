@@ -6,10 +6,17 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { LoginAttemptsService } from './login-attempts.service';
 import { CreateLoginAttemptDto } from './dto/create-login-attempt.dto';
 import { UpdateLoginAttemptDto } from './dto/update-login-attempt.dto';
+import { RolesGuard } from 'src/utils/guards/roles.guard';
+import { JwtGuard } from '../auth/guards/jwtGuard';
+import { ApiBearerAuth } from '@nestjs/swagger';
+import { EUserRole } from 'src/utils/enums';
+import { Roles } from 'src/utils/decorators/roles.decorator';
+import { UserDecorator } from 'src/utils/decorators/user.decorator';
 
 @Controller('login-attempts')
 export class LoginAttemptsController {
@@ -25,9 +32,18 @@ export class LoginAttemptsController {
     return this.loginAttemptsService.findAll();
   }
 
+  @ApiBearerAuth()
+  @Roles(EUserRole.ADMIN)
+  @UseGuards(JwtGuard, RolesGuard)
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.loginAttemptsService.findOne(+id);
+  adminFindByUserId(@Param('id') id: string) {
+    return this.loginAttemptsService.findByUserId(+id);
+  }
+
+  @Get('me')
+  @UseGuards(JwtGuard)
+  findByCurrentUser(@UserDecorator('id') id: string) {
+    return this.loginAttemptsService.findByUserId(+id);
   }
 
   // @Patch(':id')

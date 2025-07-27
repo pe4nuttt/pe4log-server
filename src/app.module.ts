@@ -32,6 +32,8 @@ import { MailModule } from './modules/mail/mail.module';
 import { NewsletterModule } from './modules/newsletter/newsletter.module';
 import { AiModule } from './modules/ai/ai.module';
 import { LoginAttemptsModule } from './modules/login-attempts/login-attempts.module';
+import { CommentsModule } from './modules/comments/comments.module';
+import { CommentReactionsModule } from './modules/comment-reactions/comment-reactions.module';
 
 @Module({
   imports: [
@@ -77,6 +79,8 @@ import { LoginAttemptsModule } from './modules/login-attempts/login-attempts.mod
     NewsletterModule,
     AiModule,
     LoginAttemptsModule,
+    CommentsModule,
+    CommentReactionsModule,
   ],
   controllers: [AppController, TagsController, CommentsController],
   providers: [AppService],

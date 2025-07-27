@@ -33,8 +33,6 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
     try {
       const { id, emails, name, photos, displayName, username } = profile;
 
-      console.log('Facebook profile', profile);
-
       const user: ISocialUserData = {
         socialId: id,
         email: emails?.[0]?.value,
