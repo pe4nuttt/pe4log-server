@@ -13,6 +13,13 @@ import { AllConfigType } from './config/configuration.config';
 import * as cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import helmet from 'helmet';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
 // import { DatabaseConfig } from './config/configuration.config';
 // import { Logger } from '@nestjs/common';
 

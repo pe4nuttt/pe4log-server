@@ -60,8 +60,16 @@ export interface AllConfigType {
   authGoogle: AuthGoogleConfig;
   authGithub: AuthGithubConfig;
   authFacebook: AuthFacebookConfig;
+  appSetting: AppSettingConfig;
   test: {
     test: string;
+  };
+}
+
+export interface AppSettingConfig {
+  newsletter: {
+    timezone: string;
+    time: string;
   };
 }
 
@@ -131,5 +139,15 @@ export const authFacebookConfig = (): { authFacebook: AuthFacebookConfig } => ({
     clientId: process.env.AUTH_FACEBOOK_CLIENT_ID,
     clientSecret: process.env.AUTH_FACEBOOK_CLIENT_SECRET,
     callbackUrl: process.env.AUTH_FACEBOOK_CALLBACK_URL,
+  },
+});
+
+export const appSettingConfig = (): { appSetting: AppSettingConfig } => ({
+  appSetting: {
+    newsletter: {
+      timezone:
+        process.env.APP_SETTING_NEWSLETTER_TIMEZONE || 'Asia/Ho_Chi_Minh',
+      time: process.env.APP_SETTING_NEWSLETTER_TIME || '08:00',
+    },
   },
 });

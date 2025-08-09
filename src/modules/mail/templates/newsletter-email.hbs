@@ -1,0 +1,289 @@
+<html lang='en'>
+  <head>
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+    <title>Newsletter - New Posts</title>
+    <style>
+      /* Reset styles */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
+          Cantarell, sans-serif;
+        line-height: 1.6;
+        color: #333333;
+        background-color: #f8f9fa;
+      }
+
+      .email-container {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Header */
+      .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 40px 30px;
+        text-align: center;
+      }
+
+      .logo {
+        font-size: 28px;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+
+      .tagline {
+        font-size: 16px;
+        opacity: 0.9;
+      }
+
+      /* Greeting Section */
+      .greeting {
+        padding: 30px;
+        background-color: #ffffff;
+      }
+
+      .greeting h1 {
+        color: #2c3e50;
+        font-size: 24px;
+        margin-bottom: 15px;
+      }
+
+      .greeting p {
+        color: #555555;
+        font-size: 16px;
+        line-height: 1.6;
+      }
+
+      /* New Posts Section */
+      .new-posts-section {
+        padding: 0 30px 30px;
+        background-color: #ffffff;
+      }
+
+      .section-title {
+        color: #2c3e50;
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 25px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #e1e8ed;
+      }
+
+      /* Post Card */
+      .post-card {
+        background: #ffffff;
+        border: 1px solid #e1e8ed;
+        border-radius: 12px;
+        margin-bottom: 25px;
+        overflow: hidden;
+        transition: transform 0.2s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+
+      .post-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .post-thumbnail {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        display: block;
+      }
+
+      .post-content {
+        padding: 20px;
+      }
+
+      .post-title {
+        color: #2c3e50;
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 10px;
+        line-height: 1.4;
+      }
+
+      .post-title a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .post-title a:hover {
+        color: #667eea;
+      }
+
+      .post-meta {
+        color: #7f8c8d;
+        font-size: 14px;
+        margin-bottom: 12px;
+      }
+
+      .post-description {
+        color: #555555;
+        font-size: 15px;
+        line-height: 1.6;
+        margin-bottom: 15px;
+      }
+
+      .read-more-btn {
+        display: inline-block;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        transition: transform 0.2s ease;
+      }
+
+      .read-more-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+      }
+
+      /* Footer */
+      .footer {
+        background-color: #2c3e50;
+        color: #ecf0f1;
+        padding: 30px;
+        text-align: center;
+      }
+
+      .footer-content {
+        margin-bottom: 20px;
+      }
+
+      .social-links {
+        margin: 20px 0;
+      }
+
+      .social-links a {
+        display: inline-block;
+        margin: 0 10px;
+        color: #ecf0f1;
+        text-decoration: none;
+        font-size: 14px;
+      }
+
+      .unsubscribe {
+        font-size: 12px;
+        color: #95a5a6;
+        margin-top: 20px;
+      }
+
+      .unsubscribe a {
+        color: #95a5a6;
+      }
+
+      /* Responsive */
+      @media only screen and (max-width: 600px) {
+        .email-container {
+          width: 100% !important;
+        }
+
+        .header,
+        .greeting,
+        .new-posts-section,
+        .footer {
+          padding: 20px !important;
+        }
+
+        .greeting h1 {
+          font-size: 20px;
+        }
+
+        .post-content {
+          padding: 15px;
+        }
+
+        .post-title {
+          font-size: 16px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class='email-container'>
+      <!-- Header -->
+      <div class='header'>
+        <div class='logo'>{{site.name}}</div>
+        <div class='tagline'>{{site.tagline}}</div>
+      </div>
+
+      <!-- Greeting Section -->
+      <div class='greeting'>
+        <h1>Hi {{user.email}}! 👋</h1>
+        <p>Hope you're having a wonderful day! We're excited to share some fresh
+          content with you that we think you'll love.</p>
+      </div>
+
+      <!-- New Posts Section -->
+      <div class='new-posts-section'>
+        <h2 class='section-title'>🔥 New Posts Just for You</h2>
+
+        {{#each posts}}
+          <div class='post-card'>
+            <img
+              src='{{this.coverImage}}'
+              alt='{{this.title}}'
+              class='post-thumbnail'
+            />
+            <div class='post-content'>
+              <h3 class='post-title'>
+                <a href='{{this.slug}}'>{{this.title}}</a>
+              </h3>
+              <div class='post-meta'>
+                Published on
+                {{this.publishedAt}}
+                • By
+                {{this.author.firstName}}
+                {{this.author.lastName}}
+              </div>
+              <p class='post-description'>{{this.description}}</p>
+              <a href='{{this.slug}}' class='read-more-btn'>Read Full Article →</a>
+            </div>
+          </div>
+        {{/each}}
+
+        {{#unless posts}}
+          <div style='text-align: center; padding: 40px; color: #7f8c8d;'>
+            <p>No new posts this time, but stay tuned for more content!</p>
+          </div>
+        {{/unless}}
+      </div>
+
+      <!-- Footer -->
+      <div class='footer'>
+        <div class='footer-content'>
+          <p><strong>Thanks for being part of our community!</strong></p>
+          <p>We appreciate your continued support and engagement.</p>
+        </div>
+
+        <div class='social-links'>
+          {{#each socialLinks}}
+            <a href='{{this.url}}'>{{this.name}}</a>
+          {{/each}}
+        </div>
+
+        <div class='unsubscribe'>
+          <p>You're receiving this because you subscribed to our newsletter.</p>
+          <p><a href='{{unsubscribeUrl}}'>Unsubscribe</a>
+            |
+            <a href='{{preferencesUrl}}'>Update Preferences</a></p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

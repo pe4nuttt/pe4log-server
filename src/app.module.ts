@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import {
+  AllConfigType,
   appConfig,
+  appSettingConfig,
   authConfig,
   authFacebookConfig,
   authGithubConfig,
@@ -34,6 +36,11 @@ import { AiModule } from './modules/ai/ai.module';
 import { LoginAttemptsModule } from './modules/login-attempts/login-attempts.module';
 import { CommentsModule } from './modules/comments/comments.module';
 import { CommentReactionsModule } from './modules/comment-reactions/comment-reactions.module';
+import { AppSettingModule } from './modules/app-setting/app-setting.module';
+import { BullModule } from '@nestjs/bullmq';
+import { BullBoardModule } from '@bull-board/nestjs';
+import { ExpressAdapter } from '@bull-board/express';
+import basicAuth from 'express-basic-auth';
 
 @Module({
   imports: [
@@ -48,6 +55,7 @@ import { CommentReactionsModule } from './modules/comment-reactions/comment-reac
         authGoogleConfig,
         authGithubConfig,
         authFacebookConfig,
+        appSettingConfig,
       ],
       cache: true,
       expandVariables: true,
@@ -81,6 +89,37 @@ import { CommentReactionsModule } from './modules/comment-reactions/comment-reac
     LoginAttemptsModule,
     CommentsModule,
     CommentReactionsModule,
+    AppSettingModule,
+    BullModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService<AllConfigType>) => ({
+        connection: {
+          host: configService.get('redis.host', {
+            infer: true,
+          }),
+          port: configService.get('redis.port', {
+            infer: true,
+          }),
+          username: configService.get('redis.username', {
+            infer: true,
+          }),
+          password: configService.get('redis.password', {
+            infer: true,
+          }),
+          db: configService.get('redis.db', {
+            infer: true,
+          }),
+        },
+      }),
+    }),
+    BullBoardModule.forRoot({
+      route: '/bull-board',
+      adapter: ExpressAdapter,
+      middleware: basicAuth({
+        challenge: true,
+        users: { admin: process.env.BULLBOARD_PASSWORD },
+      }),
+    }),
   ],
   controllers: [AppController, TagsController, CommentsController],
   providers: [AppService],
