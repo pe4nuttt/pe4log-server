@@ -17,6 +17,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { RedisService } from 'src/services/redis/redis.service';
 import {
   SUBSCRIPTION_EMAIL_EXPIRATION,
+  SUBSCRIPTION_EMAIL_KEY_CONFIRMED_PREFIX,
   SUBSCRIPTION_EMAIL_KEY_PREFIX,
 } from 'src/utils/constants';
 import { LocalesService } from 'src/services/i18n/i18n.service';
@@ -93,15 +94,31 @@ export class NewsletterController {
       );
 
       if (!email) {
-        throw new InternalServerErrorException(
-          this.localesService.translate(
-            'message.subscription.confirmSubscriptionFailed',
-          ),
+        const confirmedEmail = await this.redisService.get(
+          `${SUBSCRIPTION_EMAIL_KEY_CONFIRMED_PREFIX}${uid}`,
         );
+
+        if (!confirmedEmail)
+          throw new InternalServerErrorException(
+            this.localesService.translate(
+              'message.subscription.confirmSubscriptionFailed',
+            ),
+          );
+
+        return {
+          message: this.localesService.translate(
+            'message.subscription.confirmSubscriptionSuccess',
+          ),
+        };
       }
 
       await this.newsletterService.confirmSubscriptionNewsletter(email);
       await this.redisService.del(`${SUBSCRIPTION_EMAIL_KEY_PREFIX}${uid}`);
+
+      await this.redisService.set(
+        `${SUBSCRIPTION_EMAIL_KEY_CONFIRMED_PREFIX}${uid}`,
+        email,
+      );
 
       return {
         message: this.localesService.translate(

@@ -61,6 +61,7 @@ export interface AllConfigType {
   authGithub: AuthGithubConfig;
   authFacebook: AuthFacebookConfig;
   appSetting: AppSettingConfig;
+  appFrontend: AppFrontendConfig;
   test: {
     test: string;
   };
@@ -71,6 +72,10 @@ export interface AppSettingConfig {
     timezone: string;
     time: string;
   };
+}
+
+export interface AppFrontendConfig {
+  domain: string;
 }
 
 export const appConfig = (): { app: AppConfig } => ({
@@ -149,5 +154,11 @@ export const appSettingConfig = (): { appSetting: AppSettingConfig } => ({
         process.env.APP_SETTING_NEWSLETTER_TIMEZONE || 'Asia/Ho_Chi_Minh',
       time: process.env.APP_SETTING_NEWSLETTER_TIME || '08:00',
     },
+  },
+});
+
+export const appFrontendConfig = (): { appFrontend: AppFrontendConfig } => ({
+  appFrontend: {
+    domain: process.env.APP_FRONTEND_DOMAIN,
   },
 });

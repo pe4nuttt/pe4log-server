@@ -5,16 +5,26 @@ import { RedisService } from 'src/services/redis/redis.service';
 import { SUBSCRIPTION_EMAIL_EXPIRATION } from 'src/utils/constants';
 import { Post } from '../posts/entities/post.entity';
 import { Newsletter } from '../newsletter/entities/newsletter.entity';
+import { AllConfigType } from 'src/config/configuration.config';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class MailService {
   private logger = new Logger(MailService.name);
 
-  constructor(private mailerService: MailerService) {}
+  constructor(
+    private mailerService: MailerService,
+    private readonly configService: ConfigService<AllConfigType>,
+  ) {}
 
   async sendUserSubscribeNewsletter(email: string, uid?: string) {
     try {
-      const confirmUrl = `example.com/subscribe-newsletter?uid=${uid}`;
+      const confirmUrl = `${this.configService.getOrThrow(
+        'appFrontend.domain',
+        {
+          infer: true,
+        },
+      )}/subscribe-newsletter?uid=${uid}`;
 
       await this.mailerService.sendMail({
         to: email,

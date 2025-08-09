@@ -5,6 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import {
   AllConfigType,
   appConfig,
+  appFrontendConfig,
   appSettingConfig,
   authConfig,
   authFacebookConfig,
@@ -56,6 +57,7 @@ import basicAuth from 'express-basic-auth';
         authGithubConfig,
         authFacebookConfig,
         appSettingConfig,
+        appFrontendConfig,
       ],
       cache: true,
       expandVariables: true,
