@@ -1,0 +1,48 @@
+name: Pe4note Server CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME}}/pe4note-server:latest .
+          docker push ${{ secrets.DOCKER_USERNAME}}/pe4note-server:latest
+
+      - name: Copy docker-compose.yaml to VPS
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          # port: ${{ secrets.VPS_SSH_PORT }}
+          source: 'docker-compose.yaml'
+          target: '~/pe4note-server'
+
+      - name: SSH and deploy on VPS
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          # port: ${{ secrets.VPS_SSH_PORT }}
+          script: |
+            cd ~/pe4note-server
+            docker compose pull
+            docker compose up -d --build
